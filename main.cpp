@@ -2,7 +2,9 @@
 
 int main()
 {
-    dryengine::DryEngine engine;
-    dryengine::LOGI("main", "sample log");
+    auto engine = std::make_unique<dryengine::DryEngine>();
+
+    engine->loop();
+
     return 0;
 }   
