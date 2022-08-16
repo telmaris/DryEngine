@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Utils.hpp"
-#include "SystemManager.hpp"
-#include "ComponentManager.hpp"
-#include "EntityManager.hpp"
+#include "Scene.hpp"
 
 namespace dryengine
 {
@@ -38,8 +36,6 @@ namespace dryengine
     private:
         std::unique_ptr<EngineStatus> status;
         std::unique_ptr<sdl::SDL> sdlWrapper;
-        std::unique_ptr<systemmgr::SystemManager> systemManager;
-        std::unique_ptr<entitymgr::EntityManager> entityManager;
-        std::unique_ptr<componentmgr::ComponentManager> componentManager;
+        std::shared_ptr<scene::Scene> currentScene;
     };
 }

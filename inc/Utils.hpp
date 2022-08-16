@@ -6,7 +6,10 @@
 #include <vector>
 #include <map>
 #include <set>
-#include <chrono>
+//#include <chrono>
+#include <bitset>
+#include <queue>
+#include <array>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -17,8 +20,16 @@
 #define WINDOW_SIZE_X 640
 #define WINDOW_SIZE_Y 640
 
+#define MAX_COMPONENTS 32
+#define MAX_ENTITIES 100000
+#define NO_COMPONENT MAX_COMPONENTS
+
 namespace dryengine
 {
+    using Entity = uint32_t;
+	using Signature = std::bitset<MAX_COMPONENTS>;
+	using ComponentType = uint8_t;
+
     void LOGI(const char* tag, const char* log);
     void LOGE(const char* tag, const char* log);
 }
