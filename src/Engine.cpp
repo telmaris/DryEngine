@@ -76,9 +76,6 @@ namespace dryengine
     {
         bool error = false;
         sdlWrapper = std::make_unique<sdl::SDL>(&error);
-        systemManager = std::make_unique<systemmgr::SystemManager>();
-        entityManager = std::make_unique<entitymgr::EntityManager>();
-        componentManager = std::make_unique<componentmgr::ComponentManager>();
         status = std::make_unique<EngineStatus>(&error);
     }
 

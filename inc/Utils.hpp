@@ -10,10 +10,13 @@
 #include <bitset>
 #include <queue>
 #include <array>
+#include <functional>
 
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+
+#include "Maths.hpp"
 
 #undef main
 
@@ -21,7 +24,7 @@
 #define WINDOW_SIZE_Y 640
 
 #define MAX_COMPONENTS 32
-#define MAX_ENTITIES 100000
+#define MAX_ENTITIES 10000
 #define NO_COMPONENT MAX_COMPONENTS
 
 namespace dryengine
@@ -29,6 +32,23 @@ namespace dryengine
     using Entity = uint32_t;
 	using Signature = std::bitset<MAX_COMPONENTS>;
 	using ComponentType = uint8_t;
+    using AudioEffect = Mix_Chunk;
+	using Music = Mix_Music;
+
+    enum class STATE
+	{
+		ON,
+		OFF
+	};
+
+	enum class COLLISION
+	{
+		NONE,
+		COLLISION_LEFT,
+		COLLISION_RIGHT,
+		COLLISION_UP,
+		COLLISION_BOTTOM
+	};
 
     void LOGI(const char* tag, const char* log);
     void LOGE(const char* tag, const char* log);
