@@ -34,6 +34,10 @@ namespace dryengine
         void loop();
 
     private:
+        void Events();
+        void Render();
+        void Update(double dt);
+
         std::unique_ptr<EngineStatus> status;
         std::unique_ptr<sdl::SDL> sdlWrapper;
         std::shared_ptr<scene::Scene> currentScene;

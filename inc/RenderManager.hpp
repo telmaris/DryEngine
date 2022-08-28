@@ -8,6 +8,8 @@ namespace dryengine
         {
         public:
             int x;
+
+            void Render();
         };
     }
 }

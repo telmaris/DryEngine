@@ -77,25 +77,43 @@ namespace dryengine
         bool error = false;
         sdlWrapper = std::make_unique<sdl::SDL>(&error);
         status = std::make_unique<EngineStatus>(&error);
+        currentScene = std::make_shared<scene::Scene>();    // engine creates a default scene. It is deleted after changing
     }
 
     void DryEngine::loop()
     {
         LOGI(tag, "Entering mainloop...");
 
-        SDL_PumpEvents();
+        std::cout << "currentScene counter: " << currentScene.use_count() << std::endl;
+        std::cout << "currentScene address: " << currentScene.get() << std::endl;
 
-		SDL_Event e = SDL_Event{};
+        double dt = 0.01;
 
         while (status->gameRunning)
         {
-            while (SDL_PollEvent(&e))
-            {
-                if (e.type == SDL_QUIT)
-                {
-                    status->gameRunning = false;
-                }
-            }
+            Events();
+            Update(dt);
+            Render();
+
+            SDL_Delay(dt*1000);
         }
+
+        LOGI(tag, "Leaving mainloop...");
+    }
+
+    void DryEngine::Render()
+    {
+        currentScene->Render();
+    }
+
+    void DryEngine::Update(double dt)
+    {
+        currentScene->Update(dt);
+    }
+
+    void DryEngine::Events()
+    {
+        SDL_PumpEvents();
+        currentScene->ProcessEvents(&status->gameRunning);
     }
 }
