@@ -4,6 +4,7 @@ namespace dryengine
 {
     namespace componentmgr
     {
+
         ComponentManager::ComponentManager()
         {
             nextType = 0;

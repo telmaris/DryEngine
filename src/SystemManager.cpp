@@ -4,8 +4,9 @@ namespace dryengine
 {
     namespace systemmgr
     {
-        SystemManager::SystemManager()
+        SystemManager::SystemManager(std::shared_ptr<componentmgr::ComponentManager>& cmgr)
         {
+            componentManager = cmgr;
         }
 
         void SystemManager::EntityDestroyed(Entity e)

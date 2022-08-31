@@ -10,6 +10,7 @@ namespace dryengine
         struct SDL
         {
             SDL(bool* error);
+            ~SDL();
 
             SDL_Window *window;
             SDL_Renderer *renderer;
@@ -30,8 +31,12 @@ namespace dryengine
     {
     public:
         DryEngine();
+        ~DryEngine();
 
         void loop();
+
+        std::shared_ptr<scene::Scene> CreateScene();
+        void ChangeScene(std::shared_ptr<scene::Scene> scene);
 
     private:
         void Events();

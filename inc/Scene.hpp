@@ -19,9 +19,9 @@ namespace dryengine
             void Render();
             void Update(double dt);
 
-            Scene();
+            Scene(SDL_Renderer* mainRenderer);
 
-            ~Scene() = default;
+            ~Scene();
 
             Entity CreateEntity();
 
@@ -47,6 +47,7 @@ namespace dryengine
 
                     entityManager->SetSignature(e, sig);
                     systemManager->EntitySignatureChanged(e, sig);
+                    renderManager->EntitySignatureChanged(e, sig);
                 }
             }
 
@@ -91,12 +92,14 @@ namespace dryengine
             Signature GetSceneComponentPool();
 
         public:
-            constexpr std::shared_ptr<systemmgr::SystemManager> &SystemManager();
-            constexpr std::shared_ptr<entitymgr::EntityManager> &EntityManager();
-            constexpr std::shared_ptr<eventmgr::EventManager> &EventManager();
-            constexpr std::shared_ptr<rendermgr::RenderManager> &RenderManager();
-            constexpr std::shared_ptr<datamgr::DataManager> &DataManager();
-            constexpr std::shared_ptr<componentmgr::ComponentManager> &ComponentManager();
+            std::shared_ptr<systemmgr::SystemManager> &SystemManager();
+            std::shared_ptr<entitymgr::EntityManager> &EntityManager();
+            std::shared_ptr<eventmgr::EventManager> &EventManager();
+            std::shared_ptr<rendermgr::RenderManager> &RenderManager();
+            std::shared_ptr<datamgr::DataManager> &DataManager();
+            std::shared_ptr<componentmgr::ComponentManager> &ComponentManager();
+
+            uint8_t sceneID;
         };
     }
 }

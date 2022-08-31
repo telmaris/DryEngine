@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utils.hpp"
+#include "Components.hpp"
 
 namespace dryengine
 {
@@ -65,7 +66,8 @@ namespace dryengine
             void RegisterComponent()
             {
                 const char *name = typeid(T).name();
-
+                const char* tag = "CMGR";
+                
                 auto arr = std::make_shared<ComponentArray<T>>();
 
                 componentTypes.insert({name, nextType});
@@ -73,6 +75,8 @@ namespace dryengine
                 registeredComponents.set(nextType);
 
                 ++nextType;
+
+                LOGI(tag, "Component registered!");
             }
 
             template <typename T>

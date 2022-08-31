@@ -8,8 +8,6 @@ namespace dryengine
 
         void Scene::ProcessEvents(bool* state)
         {
-            LOGI(tag, "Processing events...");
-
             SDL_Event event = SDL_Event{};
 
             eventManager->ClearEventVector();
@@ -29,22 +27,36 @@ namespace dryengine
 
         void Scene::Render()
         {
-            
+            renderManager->Render();
         }
 
         void Scene::Update(double dt)
         {
-            systemManager->UpdateSystems(dt);
+            //systemManager->UpdateSystems(dt);
         }
 
-        Scene::Scene()
+        Scene::Scene(SDL_Renderer* mainRenderer)
         {
             entityManager = std::make_shared<entitymgr::EntityManager>();
             componentManager = std::make_shared<componentmgr::ComponentManager>();
-            systemManager = std::make_shared<systemmgr::SystemManager>();
-            renderManager = std::make_shared<rendermgr::RenderManager>();
+            systemManager = std::make_shared<systemmgr::SystemManager>(componentManager);
+            renderManager = std::make_shared<rendermgr::RenderManager>(mainRenderer, componentManager);
             dataManager = std::make_shared<datamgr::DataManager>();
             eventManager = std::make_shared<eventmgr::EventManager>();
+
+            componentManager->RegisterComponent<core::Transform>();
+            componentManager->RegisterComponent<core::Graphics>();
+            componentManager->RegisterComponent<core::Camera>();
+
+            std::cout << "Component pool: " <<  componentManager->GetComponentPool();
+
+            renderManager->SetSignature<core::Transform>();
+            renderManager->SetSignature<core::Graphics>();
+        }
+
+        Scene::~Scene()
+        {
+            LOGI(tag, "Scene destroyed!");
         }
 
         Entity Scene::CreateEntity()
@@ -65,27 +77,27 @@ namespace dryengine
 
         /* ========= Manager references ========= */
 
-        constexpr std::shared_ptr<systemmgr::SystemManager> &Scene::SystemManager()
+        std::shared_ptr<systemmgr::SystemManager> &Scene::SystemManager()
         {
             return systemManager;
         }
-        constexpr std::shared_ptr<entitymgr::EntityManager> &Scene::EntityManager()
+        std::shared_ptr<entitymgr::EntityManager> &Scene::EntityManager()
         {
             return entityManager;
         }
-        constexpr std::shared_ptr<eventmgr::EventManager> &Scene::EventManager()
+        std::shared_ptr<eventmgr::EventManager> &Scene::EventManager()
         {
             return eventManager;
         }
-        constexpr std::shared_ptr<rendermgr::RenderManager> &Scene::RenderManager()
+        std::shared_ptr<rendermgr::RenderManager> &Scene::RenderManager()
         {
             return renderManager;
         }
-        constexpr std::shared_ptr<datamgr::DataManager> &Scene::DataManager()
+        std::shared_ptr<datamgr::DataManager> &Scene::DataManager()
         {
             return dataManager;
         }
-        constexpr std::shared_ptr<componentmgr::ComponentManager> &Scene::ComponentManager()
+        std::shared_ptr<componentmgr::ComponentManager> &Scene::ComponentManager()
         {
             return componentManager;
         }

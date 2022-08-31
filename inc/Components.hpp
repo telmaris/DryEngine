@@ -4,7 +4,7 @@
 
 namespace dryengine
 {
-    namespace component
+    namespace core
     {
         struct Transform
         {
@@ -42,7 +42,7 @@ namespace dryengine
 
         struct Collider
         {
-            Collider(math::Vector2 s, bool c)
+            Collider(math::Vector2 s, bool c = true)
             {
                 collide = c;
                 isColliding = false;
@@ -73,7 +73,7 @@ namespace dryengine
             public:
                 Animation()
                 {
-                    name = "";
+                    name = {};
                     speed = 0;
                     length = 1;
                     offsetX = 0;
@@ -112,48 +112,6 @@ namespace dryengine
                 animated = false;
                 flip = SDL_FLIP_NONE;
                 scale = 1;
-            }
-
-            Graphics(const char *p, SDL_Renderer *rend, int scalearg = 1, bool a = false, int xarg = 0, int yarg = 0)
-            {
-                SDL_Surface *surf = NULL;
-                texture = NULL;
-                visible = true;
-                animated = a;
-                flip = SDL_FLIP_NONE;
-                scale = scalearg;
-
-                if (!(surf = IMG_Load(p)))
-                {
-                    std::cout << "Failed to load surface.\n";
-                    std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
-
-                    texture = NULL;
-                    return;
-                }
-
-                texture = SDL_CreateTextureFromSurface(rend, surf);
-
-                if (!texture)
-                {
-                    std::cout << "Failed to create a texture.\n";
-                    std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
-                }
-                else
-                {
-                    SDL_TextureAccess a{};
-                    SDL_PixelFormatEnum f{};
-
-                    SDL_QueryTexture(texture, (Uint32 *)&f, (int *)&a, &x, &y);
-
-                    if (xarg != 0 && yarg != 0)
-                    {
-                        x = xarg;
-                        y = yarg;
-                    }
-                }
-
-                SDL_FreeSurface(surf);
             }
 
             void AddAnimation(std::string name, int speed, int len, int offx, int offy)

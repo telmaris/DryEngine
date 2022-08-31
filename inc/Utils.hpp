@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 //#include <chrono>
 #include <bitset>
@@ -20,8 +21,8 @@
 
 #undef main
 
-#define WINDOW_SIZE_X 640
-#define WINDOW_SIZE_Y 640
+#define WINDOW_SIZE_X 526
+#define WINDOW_SIZE_Y 526
 
 #define MAX_COMPONENTS 32
 #define MAX_ENTITIES 10000

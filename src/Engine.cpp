@@ -63,6 +63,16 @@ namespace dryengine
             *error = false;
             LOGI(tag, "Initialized successfully!");
         }
+    
+        SDL::~SDL()
+        {
+            SDL_DestroyRenderer(renderer);
+		    SDL_DestroyWindow(window);
+
+		    Mix_CloseAudio();
+            IMG_Quit();
+		    SDL_Quit();
+        }
     }
 
     EngineStatus::EngineStatus(bool *error)
@@ -77,7 +87,22 @@ namespace dryengine
         bool error = false;
         sdlWrapper = std::make_unique<sdl::SDL>(&error);
         status = std::make_unique<EngineStatus>(&error);
-        currentScene = std::make_shared<scene::Scene>();    // engine creates a default scene. It is deleted after changing
+        currentScene = std::make_shared<scene::Scene>(sdlWrapper->renderer);    // engine creates a default scene. It is deleted after changing
+    }
+
+    DryEngine::~DryEngine()
+    {
+
+    }
+
+    std::shared_ptr<scene::Scene> DryEngine::CreateScene()
+    {
+        return std::make_shared<scene::Scene>(sdlWrapper->renderer);
+    }
+
+    void DryEngine::ChangeScene(std::shared_ptr<scene::Scene> scene)
+    {
+        currentScene = scene;
     }
 
     void DryEngine::loop()

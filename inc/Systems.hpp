@@ -16,8 +16,9 @@ namespace dryengine
             virtual ~System();
 
             std::set<Entity> entityList;
-            std::shared_ptr<componentmgr::ComponentManager> componentManager;
             Signature sig;
+        private:
+            std::shared_ptr<componentmgr::ComponentManager> componentManager;
         };
 
         class CollisionSystem : public System
