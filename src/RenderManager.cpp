@@ -35,10 +35,10 @@ namespace dryengine
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
             SDL_RenderClear(renderer);
             SDL_SetRenderTarget(renderer, shadow);
-            SDL_SetRenderDrawColor(renderer, tint.r, tint.g, tint.b, tint.a);
+            SDL_SetRenderDrawColor(renderer, tint.r, tint.g, tint.b, tint.a);   // render a tint
             SDL_RenderFillRect(renderer, nullptr);
 
-            for (auto const &e : lightSourceList)
+            for (auto const &e : lightSourceList)   // render all light points
             {
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto const &l = componentManager->GetComponent<core::LightSource>(e);
@@ -49,7 +49,6 @@ namespace dryengine
                 light.h = static_cast<int>(l.size.y);
                 SDL_SetRenderDrawColor(renderer, 200 + (l.temperature/2), 200, 200 - (l.temperature/2), 255);
                 SDL_RenderFillRect(renderer, &light);
-                //std::cout << "LIGHT POS: (" << dest.x << "," << t.pos.y << std::endl;
             }
 
             SDL_SetRenderTarget(renderer, nullptr);
@@ -59,13 +58,13 @@ namespace dryengine
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto const &g = componentManager->GetComponent<core::Graphics>(e);
 
-                dest.x = (int)(t.pos.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
-                dest.y = (int)(t.pos.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
-                dest.w = g.x * (WINDOW_SIZE_X / cm.size.x) * g.scale;
-                dest.h = g.y * (WINDOW_SIZE_Y / cm.size.y) * g.scale;
-
                 if (g.visible)
                 {
+                    dest.x = (int)(t.pos.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
+                    dest.y = (int)(t.pos.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
+                    dest.w = g.x * (WINDOW_SIZE_X / cm.size.x) * g.scale;
+                    dest.h = g.y * (WINDOW_SIZE_Y / cm.size.y) * g.scale;
+
                     if (g.animated)
                     {
                         g.currentAnimation->Animate();
@@ -82,7 +81,7 @@ namespace dryengine
                 }
             }
 
-            SDL_RenderCopy(renderer, shadow, nullptr, nullptr);
+            SDL_RenderCopy(renderer, shadow, nullptr, nullptr); //put the shadow on the main texture
 
             SDL_RenderPresent(renderer);
         }
