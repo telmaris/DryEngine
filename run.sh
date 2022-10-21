@@ -1,2 +1,4 @@
 #!/bin/bash
-./build/Debug/dry.exe
+cd build/Debug
+./dry.exe
+cd -

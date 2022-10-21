@@ -14,13 +14,14 @@ namespace dryengine
             SystemManager(std::shared_ptr<componentmgr::ComponentManager>& cmgr);
 
             template <typename T>
-            void RegisterSystem(Signature signature)
+            void RegisterSystem()
             {
                 const char *name = typeid(T).name();
 
-                auto sys = std::make_shared<T>(s);
+                auto s = componentManager->GetComponentPool();
+                auto sys = std::make_shared<T>(componentManager);
 
-                if ((sys->sig != 0) && ((sys->sig & signature) == sys->sig))
+                if ((sys->sig != 0) && ((sys->sig & s) == sys->sig))
                 {
                     systems.insert({name, sys});
                     systemSignatures.insert({name, sys->sig});
@@ -31,17 +32,17 @@ namespace dryengine
 
             void EntitySignatureChanged(Entity e, Signature s);
             
-            template<typename T, typename C> void SetSignature()
-            {
-                auto n = typeid.name(T);
+            // template<typename T, typename C> void SetSignature()
+            // {
+            //     auto n = typeid.name(T);
 
-                if(systems.find(n) != systems.end())
-                {
-                    auto const& syssig = systems[n]->sig;
-                    auto const& comtype = componentManager->GetComponentType<C>();
-                    signature.set(comtype);
-                }
-            }
+            //     if(systems.find(n) != systems.end())
+            //     {
+            //         auto const& syssig = systems[n]->sig;
+            //         auto const& comtype = componentManager->GetComponentType<C>();
+            //         signature.set(comtype);
+            //     }
+            // }
 
             void UpdateSystems(double dt);
 

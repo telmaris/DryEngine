@@ -78,7 +78,7 @@ namespace dryengine
             template <typename T>
             void RegisterSystem()
             {
-                systemManager->RegisterSystem<T>(GetSceneComponentPool());
+                systemManager->RegisterSystem<T>();
             }
 
         private:

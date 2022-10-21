@@ -15,6 +15,7 @@ namespace dryengine
             SDL_Window *window;
             SDL_Renderer *renderer;
             SDL_Texture *mainTexture;
+            SDL_Texture *lightPoints;
         };
     }
 

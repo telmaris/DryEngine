@@ -10,6 +10,15 @@ namespace dryengine
             renderer = rend;
             componentManager = cmgr;
             camera = 0;
+            if (rend != nullptr)
+            {
+                shadow = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+                                           SDL_TEXTUREACCESS_TARGET, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+
+                SDL_SetTextureBlendMode(shadow, SDL_BLENDMODE_MOD);
+            }
+
+            tint = RGBALight{80,80,150,255};
         }
 
         RenderManager::~RenderManager()
@@ -18,14 +27,34 @@ namespace dryengine
 
         void RenderManager::Render()
         {
-            SDL_Rect dest{}, src{};
+            SDL_Rect dest{}, src{}, light{};
 
             auto const &ct = componentManager->GetComponent<core::Transform>(camera);
             auto const &cm = componentManager->GetComponent<core::Camera>(camera);
 
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
             SDL_RenderClear(renderer);
+            SDL_SetRenderTarget(renderer, shadow);
+            SDL_SetRenderDrawColor(renderer, tint.r, tint.g, tint.b, tint.a);
+            SDL_RenderFillRect(renderer, nullptr);
 
-            for (auto const &e : entityList)
+            for (auto const &e : lightSourceList)
+            {
+                auto const &t = componentManager->GetComponent<core::Transform>(e);
+                auto const &l = componentManager->GetComponent<core::LightSource>(e);
+
+                light.x = (int)(t.pos.x + l.offset.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
+                light.y = (int)(t.pos.y + l.offset.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
+                light.w = static_cast<int>(l.size.x);
+                light.h = static_cast<int>(l.size.y);
+                SDL_SetRenderDrawColor(renderer, 200 + (l.temperature/2), 200, 200 - (l.temperature/2), 255);
+                SDL_RenderFillRect(renderer, &light);
+                //std::cout << "LIGHT POS: (" << dest.x << "," << t.pos.y << std::endl;
+            }
+
+            SDL_SetRenderTarget(renderer, nullptr);
+
+            for (auto const &e : renderList)
             {
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto const &g = componentManager->GetComponent<core::Graphics>(e);
@@ -53,16 +82,19 @@ namespace dryengine
                 }
             }
 
+            SDL_RenderCopy(renderer, shadow, nullptr, nullptr);
+
             SDL_RenderPresent(renderer);
         }
 
         void RenderManager::LoadGraphics(Entity e, const char *p, int scalearg,
-                                         bool a, int xarg, int yarg)
+                                         bool anim, int xarg, int yarg)
         {
             SDL_Surface *surf = NULL;
             SDL_Texture *texture;
 
-            auto& gfx = componentManager->GetComponent<core::Graphics>(e);
+            auto &gfx = componentManager->GetComponent<core::Graphics>(e);
+            gfx.scale = scalearg;
 
             if (!(surf = IMG_Load(p)))
             {
@@ -93,7 +125,9 @@ namespace dryengine
                     gfx.y = yarg;
                 }
 
+                //SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
                 gfx.texture = texture;
+                gfx.animated = anim;
             }
 
             SDL_FreeSurface(surf);
@@ -119,5 +153,17 @@ namespace dryengine
         {
             return componentManager->GetComponent<core::Camera>(camera).size;
         }
+
+        void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy)
+		{
+            auto& gfx = componentManager->GetComponent<core::Graphics>(e);
+			gfx.AddAnimation(n, s, l, ox, oy);
+		}
+
+		void RenderManager::RunAnimation(Entity e, std::string name)
+		{
+			auto& gfx = componentManager->GetComponent<core::Graphics>(e);
+			gfx.RunAnimation(name);
+		}
     }
 }

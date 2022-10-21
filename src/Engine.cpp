@@ -92,7 +92,7 @@ namespace dryengine
 
     DryEngine::~DryEngine()
     {
-
+        
     }
 
     std::shared_ptr<scene::Scene> DryEngine::CreateScene()

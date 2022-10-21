@@ -15,9 +15,8 @@ namespace dryengine
 
             virtual ~System();
 
-            std::set<Entity> entityList;
+            std::set<Entity> entityList{};
             Signature sig;
-        private:
             std::shared_ptr<componentmgr::ComponentManager> componentManager;
         };
 

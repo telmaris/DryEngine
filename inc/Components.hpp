@@ -253,5 +253,20 @@ namespace dryengine
             MusicThemes themes;
         };
 
+        struct LightSource
+        {
+            LightSource() : size({0,0}), temperature(0), intensity(0), 
+                            offset(math::Vector2{0,0}) {}
+
+            LightSource(math::Vector2 s, math::Vector2 off = {0,0}, int t = 255) : size(s), temperature(t),
+             intensity(0), offset(off)  {}
+
+            //uint32_t size;   //srednica kola(zrodla swiatla)
+            int temperature;    // zaleznosc cieple-zimne
+            uint8_t intensity;
+            math::Vector2 offset;
+            math::Vector2 size;
+        };
+
     }
 }

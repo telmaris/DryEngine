@@ -5,6 +5,12 @@ namespace dryengine
 {
     namespace rendermgr
     {
+        enum class RenderManagerSubsystem : uint8_t
+        {
+            RENDERER,
+            LIGHTING
+        };
+
         class RenderManager
         {
         public:
@@ -21,10 +27,22 @@ namespace dryengine
             math::Vector2 const &GetCameraSize();
 
             template <typename C>
-            void SetSignature()
+            void SetSignature(RenderManagerSubsystem s)
             {
                 auto const &comtype = componentManager->GetComponentType<C>();
-                signature.set(comtype);
+                switch (s)
+                {
+                case RenderManagerSubsystem::RENDERER:
+                    renderSignature.set(comtype);
+                    return;
+
+                case RenderManagerSubsystem::LIGHTING:
+                    lightSignature.set(comtype);
+                    return;
+
+                default:
+                    return;
+                }
             }
 
             void LoadGraphics(Entity e, const char *p, int scalearg = 1,
@@ -33,24 +51,56 @@ namespace dryengine
             void EntitySignatureChanged(Entity e, Signature s)
             {
 
-                if ((s & signature) == signature)
+                if ((s & renderSignature) == renderSignature)
                 {
-                    entityList.insert(e);
+                    renderList.insert(e);
                 }
                 else
                 {
-                    if (entityList.find(e) != entityList.end())
+                    if (renderList.find(e) != renderList.end())
                     {
-                        entityList.erase(e);
+                        renderList.erase(e);
+                    }
+                }
+                if ((s & lightSignature) == lightSignature)
+                {
+                    lightSourceList.insert(e);
+                }
+                else
+                {
+                    if (lightSourceList.find(e) != lightSourceList.end())
+                    {
+                        lightSourceList.erase(e);
                     }
                 }
             }
-        private: 
-        SDL_Renderer *renderer;
-        Entity camera;
-        std::shared_ptr<componentmgr::ComponentManager> componentManager;
-        std::set<Entity> entityList;
-        Signature signature;
+
+            void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy);
+            void RenderManager::RunAnimation(Entity e, std::string name);
+            
+        private:
+            struct RGBALight
+            {
+                RGBALight() = default;
+                RGBALight(uint8_t red, uint8_t gr, uint8_t bl, uint8_t al) : r(red),
+                        g(gr),
+                        b(bl),
+                        a(al) {}
+
+                uint8_t r,g,b,a;
+            };
+
+            SDL_Renderer *renderer;
+            SDL_Texture* shadow;
+            RGBALight tint;
+            Entity camera;
+            std::shared_ptr<componentmgr::ComponentManager> componentManager;
+            std::set<Entity> renderList;
+            std::set<Entity> lightSourceList;
+            Signature renderSignature;
+            Signature lightSignature;
+
+            bool lightsEnabled;
         };
     }
 }

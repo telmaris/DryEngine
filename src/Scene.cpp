@@ -32,7 +32,7 @@ namespace dryengine
 
         void Scene::Update(double dt)
         {
-            //systemManager->UpdateSystems(dt);
+            systemManager->UpdateSystems(dt);
         }
 
         Scene::Scene(SDL_Renderer* mainRenderer)
@@ -47,11 +47,12 @@ namespace dryengine
             componentManager->RegisterComponent<core::Transform>();
             componentManager->RegisterComponent<core::Graphics>();
             componentManager->RegisterComponent<core::Camera>();
+            componentManager->RegisterComponent<core::LightSource>();
 
-            std::cout << "Component pool: " <<  componentManager->GetComponentPool();
-
-            renderManager->SetSignature<core::Transform>();
-            renderManager->SetSignature<core::Graphics>();
+            renderManager->SetSignature<core::Transform>(rendermgr::RenderManagerSubsystem::RENDERER);
+            renderManager->SetSignature<core::Transform>(rendermgr::RenderManagerSubsystem::LIGHTING);
+            renderManager->SetSignature<core::Graphics>(rendermgr::RenderManagerSubsystem::RENDERER);
+            renderManager->SetSignature<core::LightSource>(rendermgr::RenderManagerSubsystem::LIGHTING);
         }
 
         Scene::~Scene()
