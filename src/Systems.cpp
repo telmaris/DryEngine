@@ -58,9 +58,6 @@ namespace dryengine
 
                     if (SDL_IntersectRect(&A, &B, &collisionRect))
                     {
-                        std::cout << "COLLISION: E1: (" << t1.pos.x << "," << t1.pos.y;
-                        std::cout << ") E2: (" << t2.pos.x << "," << t2.pos.y << ")\n";
-
                         auto &rb1 = componentManager->GetComponent<core::RigidBody>(e);
                         auto &rb2 = componentManager->GetComponent<core::RigidBody>(f);
                         c1.isColliding = true;

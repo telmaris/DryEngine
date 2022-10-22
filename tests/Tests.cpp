@@ -6,7 +6,6 @@ namespace dryengine
     std::unique_ptr<DryEngine> engine = std::make_unique<DryEngine>();
 
     auto s1 = engine->CreateScene();
-    auto s2 = engine->CreateScene();
 
     auto map1 = s1->CreateEntity();
     auto map2 = s1->CreateEntity();
@@ -111,20 +110,6 @@ namespace dryengine
     void Tests()
     {
         engine->ChangeScene(s1);
-
-        s1->RegisterComponent<core::RigidBody>();
-        s1->RegisterComponent<core::Collider>();
-        s1->RegisterComponent<core::Script>();
-        s1->RegisterComponent<core::KeyboardController>();
-        s1->RegisterComponent<core::MouseController>();
-        s1->RegisterComponent<core::Sound>();
-
-        s1->RegisterSystem<systems::KinematicsSystem>();
-        s1->RegisterSystem<systems::CollisionSystem>();
-        s1->RegisterSystem<systems::ScriptSystem>();
-        s1->RegisterSystem<systems::KeyboardSystem>();
-        s1->RegisterSystem<systems::MouseSystem>();
-        s1->RegisterSystem<systems::SoundSystem>();
 
         s1->RenderManager()->SetActiveCamera(camera);
 

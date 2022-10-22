@@ -43,8 +43,8 @@ namespace dryengine
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto const &l = componentManager->GetComponent<core::LightSource>(e);
 
-                light.x = (int)(t.pos.x + l.offset.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
-                light.y = (int)(t.pos.y + l.offset.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
+                light.x = static_cast<int>((t.pos.x + l.offset.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x)); // skalowanie
+                light.y = static_cast<int>((t.pos.y + l.offset.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y));
                 light.w = static_cast<int>(l.size.x);
                 light.h = static_cast<int>(l.size.y);
                 SDL_SetRenderDrawColor(renderer, 200 + (l.temperature/2), 200, 200 - (l.temperature/2), 255);
