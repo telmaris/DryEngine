@@ -1,4 +1,4 @@
-#include "../inc/Engine.hpp"
+#include "../inc/DryEngine.hpp"
 
 namespace dryengine
 {
@@ -8,33 +8,33 @@ namespace dryengine
     {
         const char *tag = "SDL";
 
-        SDL::SDL(bool *error)
+        SDL::SDL(bool& error)
         {
             if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
             {
                 LOGE(tag, SDL_GetError());
-                *error = true;
+                error = true;
                 return;
             }
 
             if (IMG_Init(IMG_INIT_PNG) == 0)
             {
                 LOGE(tag, SDL_GetError());
-                *error = true;
+                error = true;
                 return;
             }
 
             if (Mix_Init(MIX_INIT_MP3) < 0)
             {
                 LOGE(tag, SDL_GetError());
-                *error = true;
+                error = true;
                 return;
             }
 
             if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
             {
                 LOGE(tag, SDL_GetError());
-                *error = true;
+                error = true;
                 return;
             }
 
@@ -47,7 +47,7 @@ namespace dryengine
             if (!window)
             {
                 LOGE(tag, SDL_GetError());
-                *error = true;
+                error = true;
                 return;
             }
 
@@ -56,11 +56,11 @@ namespace dryengine
             if (!renderer)
             {
                 LOGE(tag, SDL_GetError());
-                *error = true;
+                error = true;
                 return;
             }
 
-            *error = false;
+            error = false;
             LOGI(tag, "Initialized successfully!");
         }
     
@@ -75,9 +75,9 @@ namespace dryengine
         }
     }
 
-    EngineStatus::EngineStatus(bool *error)
+    EngineStatus::EngineStatus(const bool& error)
     {
-        gameRunning = !(*error);
+        gameRunning = !(error);
         fpsCap = 60;
         delay = 1000.0 / fpsCap;
     }
@@ -85,9 +85,15 @@ namespace dryengine
     DryEngine::DryEngine()
     {
         bool error = false;
-        sdlWrapper = std::make_unique<sdl::SDL>(&error);
-        status = std::make_unique<EngineStatus>(&error);
-        currentScene = std::make_shared<scene::Scene>(sdlWrapper->renderer);    // engine creates a default scene. It is deleted after changing
+        sdlWrapper = std::make_unique<sdl::SDL>(error);
+        status = std::make_unique<EngineStatus>(error);
+        
+        for (uint8_t id = 0; id < MAX_SCENES; id++)
+		{
+			sceneIDpool.push(id);
+		}
+
+        currentScene = std::make_shared<scene::Scene>(sdlWrapper->renderer, MAX_SCENES);    // engine creates a default scene. It is deleted after changing
     }
 
     DryEngine::~DryEngine()
@@ -97,7 +103,16 @@ namespace dryengine
 
     std::shared_ptr<scene::Scene> DryEngine::CreateScene()
     {
-        return std::make_shared<scene::Scene>(sdlWrapper->renderer);
+        if(sceneIDpool.empty())
+        {
+            LOGE(tag, "Scene creation error. Max amount of scenes. Returning nullptr.");
+            //return std::shared_ptr<scene::Scene>(nullptr);
+            return nullptr;
+        }
+
+        auto id = sceneIDpool.front();
+        sceneIDpool.pop();
+        return std::make_shared<scene::Scene>(sdlWrapper->renderer, id);
     }
 
     void DryEngine::ChangeScene(std::shared_ptr<scene::Scene> scene)

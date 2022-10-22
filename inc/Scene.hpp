@@ -15,13 +15,15 @@ namespace dryengine
         class Scene
         {
         public:
+            Scene() = delete;
+            Scene(const Scene& scene) = delete; // option for future
+            Scene(const Scene&& scene) = delete;
+            Scene(SDL_Renderer* mainRenderer, uint8_t id);
+            ~Scene();
+
             void ProcessEvents(bool* state);
             void Render();
             void Update(double dt);
-
-            Scene(SDL_Renderer* mainRenderer);
-
-            ~Scene();
 
             Entity CreateEntity();
 
@@ -100,6 +102,7 @@ namespace dryengine
             std::shared_ptr<componentmgr::ComponentManager> &ComponentManager();
 
             uint8_t sceneID;
+            std::string tag;
         };
     }
 }

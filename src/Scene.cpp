@@ -4,9 +4,7 @@ namespace dryengine
 {
     namespace scene
     {
-        const char *tag = "SCENE";
-
-        void Scene::ProcessEvents(bool* state)
+        void Scene::ProcessEvents(bool *state)
         {
             SDL_Event event = SDL_Event{};
 
@@ -35,8 +33,13 @@ namespace dryengine
             systemManager->UpdateSystems(dt);
         }
 
-        Scene::Scene(SDL_Renderer* mainRenderer)
+        Scene::Scene(SDL_Renderer *mainRenderer, uint8_t id)    //add scene ID to constructor
         {
+            sceneID = id;
+            tag = "SCENE " + std::to_string(id);
+            
+            LOGI(tag, "Scene created!");
+
             entityManager = std::make_shared<entitymgr::EntityManager>();
             componentManager = std::make_shared<componentmgr::ComponentManager>();
             systemManager = std::make_shared<systemmgr::SystemManager>(componentManager);
@@ -44,15 +47,33 @@ namespace dryengine
             dataManager = std::make_shared<datamgr::DataManager>();
             eventManager = std::make_shared<eventmgr::EventManager>();
 
+            // GFX related core components
             componentManager->RegisterComponent<core::Transform>();
             componentManager->RegisterComponent<core::Graphics>();
             componentManager->RegisterComponent<core::Camera>();
             componentManager->RegisterComponent<core::LightSource>();
 
+            // Other core components
+            componentManager->RegisterComponent<core::RigidBody>();
+            componentManager->RegisterComponent<core::Collider>();
+            componentManager->RegisterComponent<core::Script>();
+            componentManager->RegisterComponent<core::KeyboardController>();
+            componentManager->RegisterComponent<core::MouseController>();
+            componentManager->RegisterComponent<core::Sound>();
+
+            // render manager system signature set
             renderManager->SetSignature<core::Transform>(rendermgr::RenderManagerSubsystem::RENDERER);
             renderManager->SetSignature<core::Transform>(rendermgr::RenderManagerSubsystem::LIGHTING);
             renderManager->SetSignature<core::Graphics>(rendermgr::RenderManagerSubsystem::RENDERER);
             renderManager->SetSignature<core::LightSource>(rendermgr::RenderManagerSubsystem::LIGHTING);
+
+            // register other core systems
+            systemManager->RegisterSystem<systems::KinematicsSystem>();
+            systemManager->RegisterSystem<systems::CollisionSystem>();
+            systemManager->RegisterSystem<systems::ScriptSystem>();
+            systemManager->RegisterSystem<systems::KeyboardSystem>();
+            systemManager->RegisterSystem<systems::MouseSystem>();
+            systemManager->RegisterSystem<systems::SoundSystem>();
         }
 
         Scene::~Scene()

@@ -210,7 +210,7 @@ namespace dryengine
                 script = s;
             }
 
-            std::function<void(double dt, Entity e, int button, int x, int y)> script;
+            std::function<void(double dt, Entity e, int button, int x, int y)> script;  //TODO: change C function pointer to std::function
         };
 
         struct Sound

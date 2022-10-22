@@ -12,6 +12,7 @@
 #include <queue>
 #include <array>
 #include <functional>
+#include <string>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -25,6 +26,7 @@
 #define WINDOW_SIZE_Y 800
 
 #define MAX_COMPONENTS 32
+#define MAX_SCENES 32
 #define MAX_ENTITIES 10000
 #define NO_COMPONENT MAX_COMPONENTS
 
@@ -51,6 +53,6 @@ namespace dryengine
 		COLLISION_BOTTOM
 	};
 
-    void LOGI(const char* tag, const char* log);
-    void LOGE(const char* tag, const char* log);
+    void LOGI(const std::string& tag, const char* log);
+    void LOGE(const std::string& tag, const char* log);
 }

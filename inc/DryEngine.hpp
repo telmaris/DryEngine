@@ -9,7 +9,7 @@ namespace dryengine
     {
         struct SDL
         {
-            SDL(bool* error);
+            SDL(bool& error);
             ~SDL();
 
             SDL_Window *window;
@@ -21,7 +21,7 @@ namespace dryengine
 
     struct EngineStatus
     {
-        EngineStatus(bool* error);
+        EngineStatus(const bool& error);
 
         bool gameRunning;
         int fpsCap;
@@ -47,5 +47,7 @@ namespace dryengine
         std::unique_ptr<EngineStatus> status;
         std::unique_ptr<sdl::SDL> sdlWrapper;
         std::shared_ptr<scene::Scene> currentScene;
+
+        std::queue<uint8_t> sceneIDpool;
     };
 }
