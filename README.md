@@ -1,2 +1,3 @@
 # DryEngine
-2D game engine based on SDL2
+
+Development branch. Contains additional test sources and assets.
