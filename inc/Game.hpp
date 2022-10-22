@@ -1,8 +1,9 @@
 #pragma once
 
 #include <DryEngine.hpp>
-//#include <SDL.h>
+#include <memory>
 
 #undef main
 
+// game config
 
