@@ -30,7 +30,6 @@ namespace dryengine
 
         if (collider.isColliding)
         {
-            std::cout << "Collision in script!\n";
             rb.acc = {0, 0};
             // rb.vel = { 0, 0 };
         }
@@ -68,7 +67,6 @@ namespace dryengine
 
         if (s1->EventManager()->KeyboardClick(keys, SDLK_SPACE) && collider.isColliding)
         {
-            std::cout << "Space clicked!\n";
             rb.vel.y = -500;
         }
     }

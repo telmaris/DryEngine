@@ -35,5 +35,3 @@
 
 .vscode
 build/
-*.png
-*.wav
