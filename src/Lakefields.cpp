@@ -3,7 +3,7 @@
 namespace lakefields
 {
     
-    auto lfengine = std::make_unique<DryEngine>();
+    auto lfengine = std::make_unique<dryengine::DryEngine>();
 
 
     void RunLakefields()

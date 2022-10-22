@@ -1,2 +1,2 @@
 #!/bin/bash
-./build/Debug/dry.exe
+./build/Debug/lakefields.exe
