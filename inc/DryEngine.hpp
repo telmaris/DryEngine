@@ -36,8 +36,8 @@ namespace dryengine
 
         void loop();
 
-        std::shared_ptr<scene::Scene> CreateScene();
-        void ChangeScene(std::shared_ptr<scene::Scene> scene);
+        std::shared_ptr<scene::Scene> CreateScene(SceneID id);
+        void ChangeScene(SceneID id);
 
     private:
         void Events();
@@ -48,6 +48,6 @@ namespace dryengine
         std::unique_ptr<sdl::SDL> sdlWrapper;
         std::shared_ptr<scene::Scene> currentScene;
 
-        std::queue<uint8_t> sceneIDpool;
+        std::map<SceneID, std::shared_ptr<scene::Scene>> scenes;
     };
 }

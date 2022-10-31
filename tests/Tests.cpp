@@ -5,7 +5,7 @@ namespace dryengine
 
     std::unique_ptr<DryEngine> engine = std::make_unique<DryEngine>();
 
-    auto s1 = engine->CreateScene();
+    auto s1 = engine->CreateScene(0);
 
     auto map1 = s1->CreateEntity();
     auto map2 = s1->CreateEntity();
@@ -109,7 +109,7 @@ namespace dryengine
 
     void Tests()
     {
-        engine->ChangeScene(s1);
+        engine->ChangeScene(0);
 
         s1->RenderManager()->SetActiveCamera(camera);
 
