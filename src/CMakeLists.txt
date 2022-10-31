@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
-add_library(DryEngine STATIC
+target_sources(sources
+               PRIVATE
                Utils.cpp
                Maths.cpp
                Systems.cpp

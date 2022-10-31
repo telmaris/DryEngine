@@ -68,6 +68,12 @@ namespace dryengine
 
         struct Graphics
         {
+            enum class AnimationType : uint8_t
+            {
+                STATIC_TEXTURE = 0,
+                MULTIPLE_TEXTURES = 1
+            };
+
             struct Animation
             {
             public:
@@ -79,9 +85,10 @@ namespace dryengine
                     offsetX = 0;
                     offsetY = 0;
                     frame = 0;
+                    type = AnimationType::STATIC_TEXTURE;
                 }
 
-                Animation(std::string n, int s, int l, int ox, int oy)
+                Animation(std::string n, int s, int l, int ox, int oy, AnimationType t)
                 {
                     name = n;
                     speed = s - 1;
@@ -89,6 +96,7 @@ namespace dryengine
                     offsetX = ox;
                     offsetY = oy;
                     frame = 0;
+                    type = t;
                 }
 
                 void Animate()
@@ -97,26 +105,29 @@ namespace dryengine
                 }
 
                 std::string name;
-                int speed;
+                int speed = 0;
                 int length;
                 int offsetX, offsetY;
-                int frame;
+                int frame = 0;
+                int textureID = 0;
+                AnimationType type = AnimationType::STATIC_TEXTURE;
             };
 
-            Graphics()
+            struct Texture
             {
-                texture = NULL;
-                x = 0;
-                y = 0;
-                visible = true;
-                animated = false;
-                flip = SDL_FLIP_NONE;
-                scale = 1;
-            }
+                SDL_Texture *texture = NULL;
+                int x = 0, y = 0;
+                bool visible = false;
+                bool animated = false;
+                int scale = 1;
+                SDL_RendererFlip flip = SDL_FLIP_NONE;
+            };
 
-            void AddAnimation(std::string name, int speed, int len, int offx, int offy)
+            Graphics() = default;
+
+            void AddAnimation(std::string name, int speed, int len, int offx, int offy, AnimationType type)
             {
-                animations.insert({name, std::make_shared<Animation>(name, speed, len, offx, offy)});
+                animations.insert({name, std::make_shared<Animation>(name, speed, len, offx, offy, type)});
             }
 
             void RunAnimation(std::string n)
@@ -128,22 +139,25 @@ namespace dryengine
                 }
             }
 
+            void StopAnimation()
+            {
+                currentAnimation = nullptr;
+            }
+
             void ClearGraphics()
             {
-                if (texture)
+                if (!textures.empty())
                 {
-                    SDL_DestroyTexture(texture);
+                    for(auto const& tex : textures)
+                    {
+                        SDL_DestroyTexture(tex.second.texture);
+                    }
                 }
             }
 
-            SDL_Texture *texture;
-            int x, y;
-            bool visible;
-            bool animated;
-            int scale;
+            std::map<int, Texture> textures;
             std::map<std::string, std::shared_ptr<Animation>> animations;
             std::shared_ptr<Animation> currentAnimation;
-            SDL_RendererFlip flip;
         };
 
         struct Camera

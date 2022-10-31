@@ -87,11 +87,6 @@ namespace dryengine
         bool error = false;
         sdlWrapper = std::make_unique<sdl::SDL>(error);
         status = std::make_unique<EngineStatus>(error);
-        
-        for (uint8_t id = 0; id < MAX_SCENES; id++)
-		{
-			sceneIDpool.push(id);
-		}
 
         currentScene = std::make_shared<scene::Scene>(sdlWrapper->renderer, MAX_SCENES);    // engine creates a default scene. It is deleted after changing
     }
@@ -101,23 +96,23 @@ namespace dryengine
         
     }
 
-    std::shared_ptr<scene::Scene> DryEngine::CreateScene()
+    std::shared_ptr<scene::Scene> DryEngine::CreateScene(SceneID id)
     {
-        if(sceneIDpool.empty())
+        if(scenes.find(id) != scenes.end())
         {
-            LOGE(tag, "Scene creation error. Max amount of scenes. Returning nullptr.");
+            LOGE(tag, "Scene creation error. Scene with this ID exists. Returning nullptr.");
             //return std::shared_ptr<scene::Scene>(nullptr);
             return nullptr;
         }
 
-        auto id = sceneIDpool.front();
-        sceneIDpool.pop();
-        return std::make_shared<scene::Scene>(sdlWrapper->renderer, id);
+        auto scene = std::make_shared<scene::Scene>(sdlWrapper->renderer, id);
+        scenes.insert({id, scene});
+        return scene;
     }
 
-    void DryEngine::ChangeScene(std::shared_ptr<scene::Scene> scene)
+    void DryEngine::ChangeScene(SceneID id)
     {
-        currentScene = scene;
+        currentScene = scenes[id];
     }
 
     void DryEngine::loop()
@@ -135,7 +130,7 @@ namespace dryengine
             Update(dt);
             Render();
 
-            SDL_Delay(dt*1000);
+            SDL_Delay(static_cast<Uint32>(dt*1000));
         }
 
         LOGI(tag, "Leaving mainloop...");

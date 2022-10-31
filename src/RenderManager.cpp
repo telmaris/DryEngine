@@ -18,7 +18,7 @@ namespace dryengine
                 SDL_SetTextureBlendMode(shadow, SDL_BLENDMODE_MOD);
             }
 
-            tint = RGBALight{80,80,150,255};
+            tint = RGBALight{80, 80, 150, 255};
         }
 
         RenderManager::~RenderManager()
@@ -35,10 +35,10 @@ namespace dryengine
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
             SDL_RenderClear(renderer);
             SDL_SetRenderTarget(renderer, shadow);
-            SDL_SetRenderDrawColor(renderer, tint.r, tint.g, tint.b, tint.a);   // render a tint
+            SDL_SetRenderDrawColor(renderer, tint.r, tint.g, tint.b, tint.a); // render a tint
             SDL_RenderFillRect(renderer, nullptr);
 
-            for (auto const &e : lightSourceList)   // render all light points
+            for (auto const &e : lightSourceList) // render all light points
             {
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto const &l = componentManager->GetComponent<core::LightSource>(e);
@@ -47,7 +47,7 @@ namespace dryengine
                 light.y = static_cast<int>((t.pos.y + l.offset.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y));
                 light.w = static_cast<int>(l.size.x);
                 light.h = static_cast<int>(l.size.y);
-                SDL_SetRenderDrawColor(renderer, 200 + (l.temperature/2), 200, 200 - (l.temperature/2), 255);
+                SDL_SetRenderDrawColor(renderer, 200 + (l.temperature / 2), 200, 200 - (l.temperature / 2), 255);
                 SDL_RenderFillRect(renderer, &light);
             }
 
@@ -56,44 +56,61 @@ namespace dryengine
             for (auto const &e : renderList)
             {
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
-                auto const &g = componentManager->GetComponent<core::Graphics>(e);
+                auto &g = componentManager->GetComponent<core::Graphics>(e);
 
-                if (g.visible)
+                SDL_Rect* ref = nullptr;
+
+                if (g.currentAnimation)
                 {
-                    dest.x = (int)(t.pos.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
-                    dest.y = (int)(t.pos.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
-                    dest.w = g.x * (WINDOW_SIZE_X / cm.size.x) * g.scale;
-                    dest.h = g.y * (WINDOW_SIZE_Y / cm.size.y) * g.scale;
+                    SDL_Rect src;
+                    g.currentAnimation->Animate();
 
-                    if (g.animated)
+                    if(g.currentAnimation->type == core::Graphics::AnimationType::STATIC_TEXTURE)
                     {
-                        g.currentAnimation->Animate();
-                        src.x = g.currentAnimation->offsetX * g.x + g.currentAnimation->frame * g.x;
-                        src.y = g.currentAnimation->offsetY * g.y;
-                        src.w = g.x;
-                        src.h = g.y;
-                        SDL_RenderCopyEx(renderer, g.texture, &src, &dest, NULL, NULL, g.flip);
+                        auto x = g.textures.at(g.currentAnimation->textureID).x;
+                        auto y = g.textures.at(g.currentAnimation->textureID).y;
+                        src.x = g.currentAnimation->offsetX * x + g.currentAnimation->frame * x;
+                        src.y = g.currentAnimation->offsetY * y;
+                        src.w = x;
+                        src.h = y;
+                        ref = &src;
                     }
                     else
                     {
-                        SDL_RenderCopyEx(renderer, g.texture, NULL, &dest, NULL, NULL, g.flip);
+                        for(auto& tex : g.textures)
+                        {
+                            tex.second.visible = false;
+                        }
+
+                        g.textures.at(g.currentAnimation->textureID + g.currentAnimation->frame).visible = true;
+                    }
+                }
+
+                for (auto const &tex : g.textures)
+                {
+                    if (tex.second.visible)
+                    {
+                        dest.x = (int)(t.pos.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
+                        dest.y = (int)(t.pos.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
+                        dest.w = tex.second.x * (WINDOW_SIZE_X / cm.size.x) * tex.second.scale;
+                        dest.h = tex.second.y * (WINDOW_SIZE_Y / cm.size.y) * tex.second.scale;
+                        SDL_RenderCopyEx(renderer, tex.second.texture, ref, &dest, NULL, NULL, tex.second.flip);
                     }
                 }
             }
 
-            SDL_RenderCopy(renderer, shadow, nullptr, nullptr); //put the shadow on the main texture
+            SDL_RenderCopy(renderer, shadow, nullptr, nullptr); // put the shadow on the main texture
 
             SDL_RenderPresent(renderer);
         }
 
-        void RenderManager::LoadGraphics(Entity e, const char *p, int scalearg,
+        void RenderManager::LoadGraphics(Entity e, const char *p, int id, int scalearg,
                                          bool anim, int xarg, int yarg)
         {
             SDL_Surface *surf = NULL;
-            SDL_Texture *texture;
+            SDL_Texture *texture = NULL;
 
             auto &gfx = componentManager->GetComponent<core::Graphics>(e);
-            gfx.scale = scalearg;
 
             if (!(surf = IMG_Load(p)))
             {
@@ -113,20 +130,29 @@ namespace dryengine
             }
             else
             {
+                core::Graphics::Texture tex;
+
                 SDL_TextureAccess a{};
                 SDL_PixelFormatEnum f{};
 
-                SDL_QueryTexture(texture, (Uint32 *)&f, (int *)&a, &gfx.x, &gfx.y);
+                SDL_QueryTexture(texture, (Uint32 *)&f, (int *)&a, &tex.x, &tex.y);
 
                 if (xarg != 0 && yarg != 0)
                 {
-                    gfx.x = xarg;
-                    gfx.y = yarg;
+                    tex.x = xarg;
+                    tex.y = yarg;
                 }
 
-                //SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
-                gfx.texture = texture;
-                gfx.animated = anim;
+                tex.texture = texture;
+                tex.animated = anim;
+                tex.scale = scalearg;
+
+                if(gfx.textures.empty())
+                {
+                    tex.visible = true;
+                }
+
+                gfx.textures.insert({id,tex});
             }
 
             SDL_FreeSurface(surf);
@@ -153,16 +179,16 @@ namespace dryengine
             return componentManager->GetComponent<core::Camera>(camera).size;
         }
 
-        void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy)
-		{
-            auto& gfx = componentManager->GetComponent<core::Graphics>(e);
-			gfx.AddAnimation(n, s, l, ox, oy);
-		}
+        void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy, uint8_t type)
+        {
+            auto &gfx = componentManager->GetComponent<core::Graphics>(e);
+            gfx.AddAnimation(n, s, l, ox, oy, static_cast<core::Graphics::AnimationType>(type));
+        }
 
-		void RenderManager::RunAnimation(Entity e, std::string name)
-		{
-			auto& gfx = componentManager->GetComponent<core::Graphics>(e);
-			gfx.RunAnimation(name);
-		}
+        void RenderManager::RunAnimation(Entity e, std::string name)
+        {
+            auto &gfx = componentManager->GetComponent<core::Graphics>(e);
+            gfx.RunAnimation(name);
+        }
     }
 }
