@@ -45,7 +45,7 @@ namespace dryengine
                 }
             }
 
-            void LoadGraphics(Entity e, const char *p, int scalearg = 1,
+            void LoadGraphics(Entity e, const char *p, int id, int scalearg = 1,
                               bool a = false, int xarg = 0, int yarg = 0);
 
             void EntitySignatureChanged(Entity e, Signature s)
@@ -75,7 +75,7 @@ namespace dryengine
                 }
             }
 
-            void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy);
+            void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy, uint8_t type);
             void RenderManager::RunAnimation(Entity e, std::string name);
             
         private:

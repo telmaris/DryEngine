@@ -39,11 +39,11 @@ namespace dryengine
 
         if (rb.vel.x < 0)
         {
-            gfx.flip = SDL_FLIP_HORIZONTAL;
+            gfx.textures[0].flip = SDL_FLIP_HORIZONTAL;
         }
         else
         {
-            gfx.flip = SDL_FLIP_NONE;
+            gfx.textures[0].flip = SDL_FLIP_NONE;
         }
 
         if (abs(rb.vel.x) > 0)
@@ -97,7 +97,7 @@ namespace dryengine
         auto &tMap = s1->GetComponent<core::Transform>(e);
         auto &gMap = s1->GetComponent<core::Graphics>(e);
 
-        if (tMap.pos.x + gMap.x < tCamera.pos.x)
+        if (tMap.pos.x + gMap.textures[0].x < tCamera.pos.x)
         {
             tMap.pos.x += 1920;
         }
@@ -122,57 +122,57 @@ namespace dryengine
 
         s1->AddComponent(map1, core::Transform{0, 0});
         s1->AddComponent(map1, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(map1, "assets/bg.png");
+        s1->RenderManager()->LoadGraphics(map1, "assets/bg.png", 0);
         s1->AddComponent(map1, core::Script{&mapScript});
 
         s1->AddComponent(map2, core::Transform{480, 0});
         s1->AddComponent(map2, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(map2, "assets/bg.png");
+        s1->RenderManager()->LoadGraphics(map2, "assets/bg.png", 0);
         s1->AddComponent(map2, core::Script{&mapScript});
 
         s1->AddComponent(map3, core::Transform{960, 0});
         s1->AddComponent(map3, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(map3, "assets/bg.png");
+        s1->RenderManager()->LoadGraphics(map3, "assets/bg.png", 0);
         s1->AddComponent(map3, core::Script{&mapScript});
 
         s1->AddComponent(map4, core::Transform{1440, 0});
         s1->AddComponent(map4, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(map4, "assets/bg.png");
+        s1->RenderManager()->LoadGraphics(map4, "assets/bg.png", 0);
         s1->AddComponent(map4, core::Script{&mapScript});
 
         s1->AddComponent(platform1, core::Transform{0, 600});
         s1->AddComponent(platform1, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(platform1, "assets/platform.png", 4, true, 128, 16);
+        s1->RenderManager()->LoadGraphics(platform1, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform1, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
         s1->AddComponent(platform1, core::Collider{math::Vector2{512, 64}, true});
-        s1->RenderManager()->AddAnimation(platform1, "platform", 1, 1, 0, 1);
+        s1->RenderManager()->AddAnimation(platform1, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform1, "platform");
         s1->AddComponent(platform1, core::LightSource{{512, 64}, {0, -5}, 0});
 
         s1->AddComponent(platform2, core::Transform{650, 540});
         s1->AddComponent(platform2, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(platform2, "assets/platform.png", 4, true, 128, 16);
+        s1->RenderManager()->LoadGraphics(platform2, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform2, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
         s1->AddComponent(platform2, core::Collider{math::Vector2{512, 64}, true});
-        s1->RenderManager()->AddAnimation(platform2, "platform", 1, 1, 0, 1);
+        s1->RenderManager()->AddAnimation(platform2, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform2, "platform");
         s1->AddComponent(platform2, core::LightSource{{512, 64}, {0, -5}, 0});
 
         s1->AddComponent(platform3, core::Transform{1300, 640});
         s1->AddComponent(platform3, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(platform3, "assets/platform.png", 4, true, 128, 16);
+        s1->RenderManager()->LoadGraphics(platform3, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform3, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
         s1->AddComponent(platform3, core::Collider{math::Vector2{512, 64}, true});
-        s1->RenderManager()->AddAnimation(platform3, "platform", 1, 1, 0, 1);
+        s1->RenderManager()->AddAnimation(platform3, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform3, "platform");
         s1->AddComponent(platform3, core::LightSource{{512, 64}, {0, -5}, 0});
 
         s1->AddComponent(platform4, core::Transform{1850, 580});
         s1->AddComponent(platform4, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(platform4, "assets/platform.png", 4, true, 128, 16);
+        s1->RenderManager()->LoadGraphics(platform4, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform4, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
         s1->AddComponent(platform4, core::Collider{math::Vector2{512, 64}, true});
-        s1->RenderManager()->AddAnimation(platform4, "platform", 1, 1, 0, 1);
+        s1->RenderManager()->AddAnimation(platform4, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform4, "platform");
         s1->AddComponent(platform4, core::LightSource{{512, 64}, {0, -5}, 0});
 
@@ -180,10 +180,10 @@ namespace dryengine
         s1->AddComponent(dino, core::RigidBody{math::Vector2{0, 900}, math::Vector2{0, 0}});
         s1->AddComponent(dino, core::Collider{math::Vector2{120, 120}, true});
         s1->AddComponent(dino, core::Graphics{});
-        s1->RenderManager()->LoadGraphics(dino, "assets/dino.png", 5, true, 24, 24);
+        s1->RenderManager()->LoadGraphics(dino, "assets/dino.png", 0, 5, true, 24, 24);
 
-        s1->RenderManager()->AddAnimation(dino, "walk", 100, 6, 4, 0);
-        s1->RenderManager()->AddAnimation(dino, "stand", 100, 4, 0, 0);
+        s1->RenderManager()->AddAnimation(dino, "walk", 100, 6, 4, 0, 0);
+        s1->RenderManager()->AddAnimation(dino, "stand", 100, 4, 0, 0, 0);
         s1->RenderManager()->RunAnimation(dino, "stand");
 
         s1->AddComponent(dino, core::Script{&DinoScript});
