@@ -22,8 +22,8 @@
 
 #undef main
 
-#define WINDOW_SIZE_X 1440
-#define WINDOW_SIZE_Y 800
+//#define WINDOW_SIZE_X 1920
+//#define WINDOW_SIZE_Y 1080
 
 #define MAX_COMPONENTS 32
 #define MAX_SCENES 32
@@ -36,7 +36,7 @@ namespace dryengine
 	using Signature = std::bitset<MAX_COMPONENTS>;
 	using ComponentType = uint8_t;
 	using SceneID = uint8_t;
-	
+
     using AudioEffect = Mix_Chunk;
 	using Music = Mix_Music;
 

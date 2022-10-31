@@ -189,7 +189,7 @@ namespace dryengine
                 script = nullptr;
             }
 
-            Script(void (*s)(double dt, Entity e))
+            Script(std::function<void(double dt, Entity e)> s)
             {
                 script = s;
             }
@@ -204,7 +204,7 @@ namespace dryengine
                 script = nullptr;
             }
 
-            KeyboardController(void (*s)(double t, Entity e, const Uint8 *keys, int dir))
+            KeyboardController(std::function<void(double t, Entity e, const Uint8 *keys, int dir)> s)
             {
                 script = s;
             }
@@ -219,7 +219,7 @@ namespace dryengine
                 script = nullptr;
             }
 
-            MouseController(void (*s)(double t, Entity e, int button, int x, int y))
+            MouseController(std::function<void(double t, Entity e, int button, int x, int y)> s)
             {
                 script = s;
             }

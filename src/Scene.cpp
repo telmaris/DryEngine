@@ -33,17 +33,20 @@ namespace dryengine
             systemManager->UpdateSystems(dt);
         }
 
-        Scene::Scene(SDL_Renderer *mainRenderer, uint8_t id)    //add scene ID to constructor
+        Scene::Scene(SDL_Renderer *mainRenderer, uint8_t id, int sizeX, int sizeY)    //add scene ID to constructor
         {
             sceneID = id;
             tag = "SCENE " + std::to_string(id);
             
             LOGI(tag, "Scene created!");
 
+            windowSizeX = sizeX;
+            windowSizeY = sizeY;
+
             entityManager = std::make_shared<entitymgr::EntityManager>();
             componentManager = std::make_shared<componentmgr::ComponentManager>();
             systemManager = std::make_shared<systemmgr::SystemManager>(componentManager);
-            renderManager = std::make_shared<rendermgr::RenderManager>(mainRenderer, componentManager);
+            renderManager = std::make_shared<rendermgr::RenderManager>(mainRenderer, componentManager, windowSizeX, windowSizeY);
             dataManager = std::make_shared<datamgr::DataManager>();
             eventManager = std::make_shared<eventmgr::EventManager>();
 

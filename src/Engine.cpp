@@ -8,7 +8,7 @@ namespace dryengine
     {
         const char *tag = "SDL";
 
-        SDL::SDL(bool& error)
+        SDL::SDL(bool& error, int sizeX, int sizeY)
         {
             if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
             {
@@ -41,7 +41,7 @@ namespace dryengine
             window = SDL_CreateWindow("DryEngine",
                                       SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED,
-                                      WINDOW_SIZE_X, WINDOW_SIZE_Y,
+                                      sizeX, sizeY,
                                       0);
 
             if (!window)
@@ -85,10 +85,23 @@ namespace dryengine
     DryEngine::DryEngine()
     {
         bool error = false;
-        sdlWrapper = std::make_unique<sdl::SDL>(error);
+        windowSizeX = 1920;
+        windowSizeY = 1080;
+        sdlWrapper = std::make_unique<sdl::SDL>(error, windowSizeX, windowSizeY);
         status = std::make_unique<EngineStatus>(error);
 
-        currentScene = std::make_shared<scene::Scene>(sdlWrapper->renderer, MAX_SCENES);    // engine creates a default scene. It is deleted after changing
+        currentScene = std::make_shared<scene::Scene>(sdlWrapper->renderer, MAX_SCENES, windowSizeX, windowSizeY);    // engine creates a default scene. It is deleted after changing
+    }
+
+    DryEngine::DryEngine(int sizeX, int sizeY)
+    {
+        bool error = false;
+        windowSizeX = sizeX;
+        windowSizeY = sizeY;
+        sdlWrapper = std::make_unique<sdl::SDL>(error, windowSizeX, windowSizeY);
+        status = std::make_unique<EngineStatus>(error);
+
+        currentScene = std::make_shared<scene::Scene>(sdlWrapper->renderer, MAX_SCENES, windowSizeX, windowSizeY);    // engine creates a default scene. It is deleted after changing
     }
 
     DryEngine::~DryEngine()
@@ -105,7 +118,7 @@ namespace dryengine
             return nullptr;
         }
 
-        auto scene = std::make_shared<scene::Scene>(sdlWrapper->renderer, id);
+        auto scene = std::make_shared<scene::Scene>(sdlWrapper->renderer, id, windowSizeX, windowSizeY);
         scenes.insert({id, scene});
         return scene;
     }
@@ -113,6 +126,11 @@ namespace dryengine
     void DryEngine::ChangeScene(SceneID id)
     {
         currentScene = scenes[id];
+    }
+
+    void DryEngine::ChangeScene(std::shared_ptr<scene::Scene> scene_ptr)
+    {
+        currentScene = scene_ptr;
     }
 
     void DryEngine::loop()
@@ -150,5 +168,10 @@ namespace dryengine
     {
         SDL_PumpEvents();
         currentScene->ProcessEvents(&status->gameRunning);
+    }
+
+    void DryEngine::StopEngine()
+    {
+        status->gameRunning = false;
     }
 }

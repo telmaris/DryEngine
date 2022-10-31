@@ -9,7 +9,7 @@ namespace dryengine
     {
         struct SDL
         {
-            SDL(bool& error);
+            SDL(bool& error, int sizeX, int sizeY);
             ~SDL();
 
             SDL_Window *window;
@@ -32,12 +32,18 @@ namespace dryengine
     {
     public:
         DryEngine();
+        DryEngine(int sizeX, int sizeY);
+        DryEngine(DryEngine&) = delete;
+        DryEngine(DryEngine&&) = delete;
         ~DryEngine();
 
         void loop();
 
         std::shared_ptr<scene::Scene> CreateScene(SceneID id);
         void ChangeScene(SceneID id);
+        void ChangeScene(std::shared_ptr<scene::Scene> scene_ptr);
+
+        void StopEngine();
 
     private:
         void Events();
@@ -49,5 +55,7 @@ namespace dryengine
         std::shared_ptr<scene::Scene> currentScene;
 
         std::map<SceneID, std::shared_ptr<scene::Scene>> scenes;
+
+        int windowSizeX, windowSizeY;
     };
 }

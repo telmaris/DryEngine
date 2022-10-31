@@ -18,7 +18,7 @@ namespace dryengine
             Scene() = delete;
             Scene(const Scene& scene) = delete; // option for future
             Scene(const Scene&& scene) = delete;
-            Scene(SDL_Renderer* mainRenderer, uint8_t id);
+            Scene(SDL_Renderer* mainRenderer, uint8_t id, int sizeX, int sizeY);
             ~Scene();
 
             void ProcessEvents(bool* state);
@@ -103,6 +103,8 @@ namespace dryengine
 
             uint8_t sceneID;
             std::string tag;
+
+            int windowSizeX, windowSizeY;
         };
     }
 }

@@ -15,7 +15,8 @@ namespace dryengine
         {
         public:
             RenderManager(SDL_Renderer *rend,
-                          std::shared_ptr<componentmgr::ComponentManager> &cmgr);
+                          std::shared_ptr<componentmgr::ComponentManager> &cmgr,
+                           int sizeX, int sizeY);
 
             ~RenderManager();
 
@@ -78,6 +79,7 @@ namespace dryengine
             void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy, uint8_t type);
             void RenderManager::RunAnimation(Entity e, std::string name);
             
+            //todo: set window size
         private:
             struct RGBALight
             {
@@ -99,6 +101,8 @@ namespace dryengine
             std::set<Entity> lightSourceList;
             Signature renderSignature;
             Signature lightSignature;
+
+            int windowSizeX, windowSizeY;
 
             bool lightsEnabled;
         };
