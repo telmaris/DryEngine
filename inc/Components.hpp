@@ -194,7 +194,14 @@ namespace dryengine
                 script = s;
             }
 
+            void SetState(bool state)
+            {
+                active = state;
+            }
+
             std::function<void(double dt, Entity e)> script;
+
+            bool active = true;
         };
 
         struct KeyboardController
@@ -209,7 +216,14 @@ namespace dryengine
                 script = s;
             }
 
+            void SetState(bool state)
+            {
+                active = state;
+            }
+
             std::function<void(double dt, Entity e, const Uint8 *keys, int dir)> script;
+
+            bool active = true;
         };
 
         struct MouseController
@@ -224,7 +238,14 @@ namespace dryengine
                 script = s;
             }
 
-            std::function<void(double dt, Entity e, int button, int x, int y)> script;  //TODO: change C function pointer to std::function
+            void SetState(bool state)
+            {
+                active = state;
+            }
+
+            std::function<void(double dt, Entity e, int button, int x, int y)> script;
+
+            bool active = true;
         };
 
         struct Sound

@@ -138,7 +138,7 @@ namespace dryengine
             {
                 auto const &sc = componentManager->GetComponent<core::Script>(e);
 
-                sc.script(dt, e);
+                if(sc.active) sc.script(dt, e);
             }
         }
 
@@ -162,7 +162,7 @@ namespace dryengine
             {
                 auto const &kc = componentManager->GetComponent<core::KeyboardController>(e);
 
-                kc.script(dt, e, key, 1);
+                if(kc.active) kc.script(dt, e, key, 1);
             }
         }
 
@@ -187,7 +187,7 @@ namespace dryengine
             {
                 auto const &mc = componentManager->GetComponent<core::MouseController>(e);
 
-                mc.script(dt, e, button, x, y);
+                if(mc.active) mc.script(dt, e, button, x, y);
             }
         }
 
