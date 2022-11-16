@@ -36,6 +36,7 @@ namespace dryengine
 	using Signature = std::bitset<MAX_COMPONENTS>;
 	using ComponentType = uint8_t;
 	using SceneID = uint8_t;
+	using Geometry = SDL_Rect;
 	
     using AudioEffect = Mix_Chunk;
 	using Music = Mix_Music;

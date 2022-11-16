@@ -115,7 +115,7 @@ namespace dryengine
 
         s1->AddComponent(camera, core::Transform{0, 0});
         s1->AddComponent(camera, core::Camera{math::Vector2{1440, 800}});
-        s1->AddComponent(camera, core::Script{&cameraScript});
+        s1->AddComponent(camera, core::Script{cameraScript});
 
         // std::cout << s1->GetCameraPosition() << std::endl;
         // std::cout << s1->RenderManager()->GetCameraSize() << std::endl;
@@ -123,28 +123,29 @@ namespace dryengine
         s1->AddComponent(map1, core::Transform{0, 0});
         s1->AddComponent(map1, core::Graphics{});
         s1->RenderManager()->LoadGraphics(map1, "assets/bg.png", 0);
-        s1->AddComponent(map1, core::Script{&mapScript});
+        s1->AddComponent(map1, core::Script{mapScript});
 
         s1->AddComponent(map2, core::Transform{480, 0});
         s1->AddComponent(map2, core::Graphics{});
         s1->RenderManager()->LoadGraphics(map2, "assets/bg.png", 0);
-        s1->AddComponent(map2, core::Script{&mapScript});
+        s1->AddComponent(map2, core::Script{mapScript});
 
         s1->AddComponent(map3, core::Transform{960, 0});
         s1->AddComponent(map3, core::Graphics{});
         s1->RenderManager()->LoadGraphics(map3, "assets/bg.png", 0);
-        s1->AddComponent(map3, core::Script{&mapScript});
+        s1->AddComponent(map3, core::Script{mapScript});
 
         s1->AddComponent(map4, core::Transform{1440, 0});
         s1->AddComponent(map4, core::Graphics{});
         s1->RenderManager()->LoadGraphics(map4, "assets/bg.png", 0);
-        s1->AddComponent(map4, core::Script{&mapScript});
+        s1->AddComponent(map4, core::Script{mapScript});
 
         s1->AddComponent(platform1, core::Transform{0, 600});
         s1->AddComponent(platform1, core::Graphics{});
         s1->RenderManager()->LoadGraphics(platform1, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform1, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
-        s1->AddComponent(platform1, core::Collider{math::Vector2{512, 64}, true});
+        s1->AddComponent(platform1, core::Collider{});
+        s1->GetComponent<core::Collider>(platform1).AddColliderBox(math::Vector2{512, 64});
         s1->RenderManager()->AddAnimation(platform1, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform1, "platform");
         s1->AddComponent(platform1, core::LightSource{{512, 64}, {0, -5}, 0});
@@ -153,7 +154,8 @@ namespace dryengine
         s1->AddComponent(platform2, core::Graphics{});
         s1->RenderManager()->LoadGraphics(platform2, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform2, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
-        s1->AddComponent(platform2, core::Collider{math::Vector2{512, 64}, true});
+        s1->AddComponent(platform2, core::Collider{});
+        s1->GetComponent<core::Collider>(platform2).AddColliderBox(math::Vector2{512, 64});
         s1->RenderManager()->AddAnimation(platform2, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform2, "platform");
         s1->AddComponent(platform2, core::LightSource{{512, 64}, {0, -5}, 0});
@@ -162,7 +164,8 @@ namespace dryengine
         s1->AddComponent(platform3, core::Graphics{});
         s1->RenderManager()->LoadGraphics(platform3, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform3, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
-        s1->AddComponent(platform3, core::Collider{math::Vector2{512, 64}, true});
+        s1->AddComponent(platform3, core::Collider{});
+        s1->GetComponent<core::Collider>(platform3).AddColliderBox(math::Vector2{512, 64});
         s1->RenderManager()->AddAnimation(platform3, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform3, "platform");
         s1->AddComponent(platform3, core::LightSource{{512, 64}, {0, -5}, 0});
@@ -171,14 +174,16 @@ namespace dryengine
         s1->AddComponent(platform4, core::Graphics{});
         s1->RenderManager()->LoadGraphics(platform4, "assets/platform.png", 0, 4, true, 128, 16);
         s1->AddComponent(platform4, core::RigidBody{math::Vector2{0, 0}, math::Vector2{0, 0}});
-        s1->AddComponent(platform4, core::Collider{math::Vector2{512, 64}, true});
+        s1->AddComponent(platform4, core::Collider{});
+        s1->GetComponent<core::Collider>(platform4).AddColliderBox(math::Vector2{512, 64});
         s1->RenderManager()->AddAnimation(platform4, "platform", 1, 1, 0, 1, 0);
         s1->RenderManager()->RunAnimation(platform4, "platform");
         s1->AddComponent(platform4, core::LightSource{{512, 64}, {0, -5}, 0});
 
         s1->AddComponent(dino, core::Transform{121, 300});
         s1->AddComponent(dino, core::RigidBody{math::Vector2{0, 900}, math::Vector2{0, 0}});
-        s1->AddComponent(dino, core::Collider{math::Vector2{120, 120}, true});
+        s1->AddComponent(dino, core::Collider{});
+        s1->GetComponent<core::Collider>(dino).AddColliderBox(math::Vector2{120,120});
         s1->AddComponent(dino, core::Graphics{});
         s1->RenderManager()->LoadGraphics(dino, "assets/dino.png", 0, 5, true, 24, 24);
 
@@ -186,9 +191,9 @@ namespace dryengine
         s1->RenderManager()->AddAnimation(dino, "stand", 100, 4, 0, 0, 0);
         s1->RenderManager()->RunAnimation(dino, "stand");
 
-        s1->AddComponent(dino, core::Script{&DinoScript});
-        s1->AddComponent(dino, core::KeyboardController{&KeyboardTestScript});
-        s1->AddComponent(dino, core::MouseController{&mscript});
+        s1->AddComponent(dino, core::Script{DinoScript});
+        s1->AddComponent(dino, core::KeyboardController{KeyboardTestScript});
+        s1->AddComponent(dino, core::MouseController{mscript});
         s1->AddComponent(dino, core::Sound{});
         s1->AddComponent(dino, core::LightSource{{120,120}, {0, 0}, 0});
 

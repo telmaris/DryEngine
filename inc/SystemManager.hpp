@@ -28,21 +28,22 @@ namespace dryengine
                 }
             }
 
+            template <typename T>
+            std::shared_ptr<systems::System> GetSystem()
+            {
+                const char *name = typeid(T).name();
+
+                if(systems.find(name) != systems.end())
+                {
+                    return systems[name];
+                }
+                
+                return nullptr;
+            }
+
             void EntityDestroyed(Entity e);
 
             void EntitySignatureChanged(Entity e, Signature s);
-            
-            // template<typename T, typename C> void SetSignature()
-            // {
-            //     auto n = typeid.name(T);
-
-            //     if(systems.find(n) != systems.end())
-            //     {
-            //         auto const& syssig = systems[n]->sig;
-            //         auto const& comtype = componentManager->GetComponentType<C>();
-            //         signature.set(comtype);
-            //     }
-            // }
 
             void UpdateSystems(double dt);
 

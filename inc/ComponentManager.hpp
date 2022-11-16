@@ -41,8 +41,8 @@ namespace dryengine
             }
 
         private:
-            std::array<T, MAX_ENTITIES> componentArray;
-            std::set<Entity> entityList;
+            std::array<T, MAX_ENTITIES> componentArray{};
+            std::set<Entity> entityList{};
         };
 
         class ComponentManager

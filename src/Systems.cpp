@@ -35,6 +35,13 @@ namespace dryengine
             for (auto const &e : entityList)
             {
                 auto &c1 = componentManager->GetComponent<core::Collider>(e);
+
+                // reset all collider boxes (no collision)
+                for (auto &box : c1.colliderBoxes)
+                {
+                    box.isColliding = false;
+                }
+
                 c1.isColliding = false;
             }
 
@@ -43,50 +50,62 @@ namespace dryengine
                 auto &t1 = componentManager->GetComponent<core::Transform>(e);
                 auto &c1 = componentManager->GetComponent<core::Collider>(e);
 
-                SDL_Rect A = SDL_Rect{static_cast<int>(t1.pos.x), static_cast<int>(t1.pos.y), static_cast<int>(c1.size.x), static_cast<int>(c1.size.y)};
-
                 checked.erase(e);
 
-                for (auto const &f : checked)
+                for (auto &box : c1.colliderBoxes)
                 {
-                    auto &t2 = componentManager->GetComponent<core::Transform>(f);
-                    auto &c2 = componentManager->GetComponent<core::Collider>(f);
+                    SDL_Rect A = SDL_Rect{static_cast<int>(t1.pos.x + box.offset.x), static_cast<int>(t1.pos.y + box.offset.y),
+                                          static_cast<int>(box.size.x), static_cast<int>(box.size.y)};
+                    box.isColliding = false;
 
-                    SDL_Rect B = SDL_Rect{static_cast<int>(t2.pos.x), static_cast<int>(t2.pos.y), static_cast<int>(c2.size.x), static_cast<int>(c2.size.y)};
-
-                    SDL_Rect collisionRect;
-
-                    if (SDL_IntersectRect(&A, &B, &collisionRect))
+                    for (auto const &f : checked)
                     {
-                        auto &rb1 = componentManager->GetComponent<core::RigidBody>(e);
-                        auto &rb2 = componentManager->GetComponent<core::RigidBody>(f);
-                        c1.isColliding = true;
-                        c2.isColliding = true;
+                        auto &t2 = componentManager->GetComponent<core::Transform>(f);
+                        auto &c2 = componentManager->GetComponent<core::Collider>(f);
 
-                        if (collisionRect.w >= collisionRect.h)
+                        for (auto &target : c2.colliderBoxes)
                         {
-                            // top/bottom
+                            SDL_Rect B = SDL_Rect{static_cast<int>(t2.pos.x + target.offset.x), static_cast<int>(t2.pos.y + target.offset.y),
+                             static_cast<int>(target.size.x), static_cast<int>(target.size.y)};
 
-                            if (collisionRect.y == t1.pos.y)
-                            {
-                                t2.pos.y += t1.pos.y - (t2.pos.y + c2.size.y);
-                            }
-                            else
-                            {
-                                t2.pos.y += t1.pos.y - (t2.pos.y + c1.size.y);
-                            }
-                        }
-                        else
-                        {
-                            // left/right
+                            SDL_Rect collisionRect;
 
-                            if (collisionRect.x == t1.pos.x)
+                            if (SDL_IntersectRect(&A, &B, &collisionRect))
                             {
-                                t2.pos.x += t1.pos.x - (t2.pos.x + c2.size.x);
-                            }
-                            else
-                            {
-                                t2.pos.x += t1.pos.x - (t2.pos.x + c1.size.x);
+                                auto &rb1 = componentManager->GetComponent<core::RigidBody>(e);
+                                auto &rb2 = componentManager->GetComponent<core::RigidBody>(f);
+
+                                box.isColliding = true;
+                                c1.isColliding = true;
+                                target.isColliding = true;
+                                c2.isColliding = true;
+
+                                if (collisionRect.w >= collisionRect.h)
+                                {
+                                    // top/bottom
+
+                                    if (collisionRect.y == t1.pos.y + box.offset.y)
+                                    {
+                                        t2.pos.y += t1.pos.y + box.offset.y - (t2.pos.y + target.offset.y + target.size.y);
+                                    }
+                                    else
+                                    {
+                                        t2.pos.y += t1.pos.y + box.offset.y + box.size.y - (t2.pos.y + target.offset.y);
+                                    }
+                                }
+                                else
+                                {
+                                    // left/right
+
+                                    if (collisionRect.x == t1.pos.x + box.offset.x)
+                                    {
+                                        t2.pos.x += t1.pos.x + box.offset.x - (t2.pos.x + target.offset.x + target.size.x);
+                                    }
+                                    else
+                                    {
+                                        t2.pos.x += t1.pos.x + box.offset.x + box.size.x - (t2.pos.x + target.offset.x);
+                                    }
+                                }
                             }
                         }
                     }
@@ -138,7 +157,8 @@ namespace dryengine
             {
                 auto const &sc = componentManager->GetComponent<core::Script>(e);
 
-                sc.script(dt, e);
+                if (sc.active)
+                    sc.script(dt, e);
             }
         }
 
@@ -162,7 +182,8 @@ namespace dryengine
             {
                 auto const &kc = componentManager->GetComponent<core::KeyboardController>(e);
 
-                kc.script(dt, e, key, 1);
+                if (kc.active)
+                    kc.script(dt, e, key, 1);
             }
         }
 
@@ -187,7 +208,8 @@ namespace dryengine
             {
                 auto const &mc = componentManager->GetComponent<core::MouseController>(e);
 
-                mc.script(dt, e, button, x, y);
+                if (mc.active)
+                    mc.script(dt, e, button, x, y);
             }
         }
 

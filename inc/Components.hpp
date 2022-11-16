@@ -42,28 +42,35 @@ namespace dryengine
 
         struct Collider
         {
-            Collider(math::Vector2 s, bool c = true)
+            Collider() = default;
+
+            struct ColliderBox
             {
-                collide = c;
-                isColliding = false;
-                collision = COLLISION::NONE;
-                size.x = s.x;
-                size.y = s.y;
+                int id;
+                bool collide;
+                bool isColliding;
+                COLLISION collision;
+                math::Vector2 size;
+                math::Vector2 offset;
+            };
+
+            void AddColliderBox(math::Vector2 size, math::Vector2 pos = {}, bool active = true)
+            {
+                ColliderBox box{};
+                box.collide = active;
+                box.isColliding = false;
+                box.collision = COLLISION::NONE;
+                box.size = size;
+                box.offset = pos;
+                box.id = colliderBoxes.size();
+
+                colliderBoxes.push_back(box);
             }
 
-            Collider()
-            {
-                collide = false;
-                isColliding = false;
-                collision = COLLISION::NONE;
-                size.x = 0;
-                size.y = 0;
-            }
+            //TODO:: add remove collider box mechanic
 
-            bool collide;
+            std::vector<ColliderBox> colliderBoxes{};
             bool isColliding;
-            COLLISION collision;
-            math::Vector2 size;
         };
 
         struct Graphics
@@ -189,12 +196,19 @@ namespace dryengine
                 script = nullptr;
             }
 
-            Script(void (*s)(double dt, Entity e))
+            Script(std::function<void(double dt, Entity e)> s)
             {
                 script = s;
             }
 
+            void SetState(bool state)
+            {
+                active = state;
+            }
+
             std::function<void(double dt, Entity e)> script;
+
+            bool active = true;
         };
 
         struct KeyboardController
@@ -204,12 +218,19 @@ namespace dryengine
                 script = nullptr;
             }
 
-            KeyboardController(void (*s)(double t, Entity e, const Uint8 *keys, int dir))
+            KeyboardController(std::function<void(double t, Entity e, const Uint8 *keys, int dir)> s)
             {
                 script = s;
             }
 
+            void SetState(bool state)
+            {
+                active = state;
+            }
+
             std::function<void(double dt, Entity e, const Uint8 *keys, int dir)> script;
+
+            bool active = true;
         };
 
         struct MouseController
@@ -219,12 +240,19 @@ namespace dryengine
                 script = nullptr;
             }
 
-            MouseController(void (*s)(double t, Entity e, int button, int x, int y))
+            MouseController(std::function<void(double t, Entity e, int button, int x, int y)> s)
             {
                 script = s;
             }
 
-            std::function<void(double dt, Entity e, int button, int x, int y)> script;  //TODO: change C function pointer to std::function
+            void SetState(bool state)
+            {
+                active = state;
+            }
+
+            std::function<void(double dt, Entity e, int button, int x, int y)> script;
+
+            bool active = true;
         };
 
         struct Sound
