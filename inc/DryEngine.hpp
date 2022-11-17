@@ -39,6 +39,8 @@ namespace dryengine
         std::shared_ptr<scene::Scene> CreateScene(SceneID id);
         void ChangeScene(SceneID id);
 
+        SDL_Renderer* MainRenderer();
+
     private:
         void Events();
         void Render();

@@ -151,4 +151,9 @@ namespace dryengine
         SDL_PumpEvents();
         currentScene->ProcessEvents(&status->gameRunning);
     }
+
+    SDL_Renderer* DryEngine::MainRenderer()
+    {
+        return sdlWrapper->renderer;
+    }
 }

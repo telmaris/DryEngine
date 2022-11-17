@@ -21,10 +21,14 @@ namespace dryengine
 
             void Render();
 
+            // CAMERA
+
             void SetActiveCamera(Entity e);
             void SetCameraPosition(math::Vector2 pos);
             math::Vector2 const &GetCameraPosition();
             math::Vector2 const &GetCameraSize();
+
+            // CORE
 
             template <typename C>
             void SetSignature(RenderManagerSubsystem s)
@@ -44,9 +48,6 @@ namespace dryengine
                     return;
                 }
             }
-
-            void LoadGraphics(Entity e, const char *p, int id, int scalearg = 1,
-                              bool a = false, int xarg = 0, int yarg = 0);
 
             void EntitySignatureChanged(Entity e, Signature s)
             {
@@ -75,9 +76,25 @@ namespace dryengine
                 }
             }
 
+            // Loads and returns a raw SDL_Texture pointer
+            SDL_Texture* ReturnTexture(const char *p);
+
+            //Create empty texture of size [x,y]
+            SDL_Texture* CreateTexture(int x, int y);
+
+            // spritemap - Sprite map texture. size - {pos_x(in tiles), pos_y, size_x(in pixels), size_y}
+            SDL_Texture* CutSprite(SDL_Texture* spritemap, Geometry size);
+
+            // GRAPHICS & ANIMATION
+
+            // Loads a ready Graphics component
+            void LoadGraphics(Entity e, const char *p, int id, int scalearg = 1,
+                              bool a = false, int xarg = 0, int yarg = 0);
             void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy, uint8_t type);
             void RenderManager::RunAnimation(Entity e, std::string name);
             
+            // 
+
         private:
             struct RGBALight
             {

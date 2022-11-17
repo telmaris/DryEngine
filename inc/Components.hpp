@@ -123,6 +123,7 @@ namespace dryengine
             struct Texture
             {
                 SDL_Texture *texture = NULL;
+                math::Vector2 offset{};
                 int x = 0, y = 0;
                 bool visible = false;
                 bool animated = false;
@@ -159,6 +160,30 @@ namespace dryengine
                     {
                         SDL_DestroyTexture(tex.second.texture);
                     }
+                }
+            }
+
+            void ShowTexture(int id, bool show)
+            {
+                if(textures.find(id) != textures.end())
+                {
+                    textures.at(id).visible = show;
+                }
+            }
+
+            void AddTexture(int id, Texture tex)
+            {
+                if(textures.find(id) == textures.end())
+                {
+                    textures.insert({id, tex});
+                }
+            }
+
+            void DeleteTexture(int id)
+            {
+                if(textures.find(id) != textures.end())
+                {
+                    textures.erase(id);
                 }
             }
 

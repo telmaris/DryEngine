@@ -58,14 +58,14 @@ namespace dryengine
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto &g = componentManager->GetComponent<core::Graphics>(e);
 
-                SDL_Rect* ref = nullptr;
+                SDL_Rect *ref = nullptr;
 
                 if (g.currentAnimation)
                 {
                     SDL_Rect src;
                     g.currentAnimation->Animate();
 
-                    if(g.currentAnimation->type == core::Graphics::AnimationType::STATIC_TEXTURE)
+                    if (g.currentAnimation->type == core::Graphics::AnimationType::STATIC_TEXTURE)
                     {
                         auto x = g.textures.at(g.currentAnimation->textureID).x;
                         auto y = g.textures.at(g.currentAnimation->textureID).y;
@@ -77,7 +77,7 @@ namespace dryengine
                     }
                     else
                     {
-                        for(auto& tex : g.textures)
+                        for (auto &tex : g.textures)
                         {
                             tex.second.visible = false;
                         }
@@ -90,8 +90,8 @@ namespace dryengine
                 {
                     if (tex.second.visible)
                     {
-                        dest.x = (int)(t.pos.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
-                        dest.y = (int)(t.pos.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
+                        dest.x = (int)(t.pos.x + tex.second.offset.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
+                        dest.y = (int)(t.pos.y + tex.second.offset.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
                         dest.w = tex.second.x * (WINDOW_SIZE_X / cm.size.x) * tex.second.scale;
                         dest.h = tex.second.y * (WINDOW_SIZE_Y / cm.size.y) * tex.second.scale;
                         SDL_RenderCopyEx(renderer, tex.second.texture, ref, &dest, NULL, NULL, tex.second.flip);
@@ -147,15 +147,68 @@ namespace dryengine
                 tex.animated = anim;
                 tex.scale = scalearg;
 
-                if(gfx.textures.empty())
+                if (gfx.textures.empty())
                 {
                     tex.visible = true;
                 }
 
-                gfx.textures.insert({id,tex});
+                gfx.AddTexture(id, tex);
             }
 
             SDL_FreeSurface(surf);
+        }
+
+        SDL_Texture *RenderManager::ReturnTexture(const char *p)
+        {
+            SDL_Surface *surf = NULL;
+            SDL_Texture *texture = NULL;
+
+            if (!(surf = IMG_Load(p)))
+            {
+                std::cout << "Failed to load surface.\n";
+                std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+
+                texture = NULL;
+                return nullptr;
+            }
+
+            texture = SDL_CreateTextureFromSurface(renderer, surf);
+
+            SDL_FreeSurface(surf);
+
+            if (!texture)
+            {
+                std::cout << "Failed to create a texture.\n";
+                std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+                return nullptr;
+            }
+
+            return texture;
+        }
+
+        SDL_Texture *RenderManager::CreateTexture(int x, int y)
+        {
+            SDL_Texture *tex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+                                                 SDL_TEXTUREACCESS_TARGET, x, y);
+
+            return tex;
+        }
+
+        SDL_Texture *RenderManager::CutSprite(SDL_Texture *spritemap, Geometry size)
+        {
+            if (spritemap == NULL)
+                return nullptr;
+
+            SDL_Texture *sprite = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+                                                    SDL_TEXTUREACCESS_TARGET, size.w, size.h);
+            if (sprite == NULL)
+                return nullptr;
+
+            SDL_SetRenderTarget(renderer, sprite);
+            SDL_Rect position = {size.x * size.w, size.y * size.h, size.w, size.h};
+            SDL_RenderCopy(renderer, spritemap, &position, NULL);
+            SDL_SetRenderTarget(renderer, NULL);
+            return sprite;
         }
 
         void RenderManager::SetActiveCamera(Entity e)
