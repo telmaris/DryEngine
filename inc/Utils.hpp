@@ -22,8 +22,8 @@
 
 #undef main
 
-#define WINDOW_SIZE_X 1440
-#define WINDOW_SIZE_Y 800
+//#define WINDOW_SIZE_X 1440
+//#define WINDOW_SIZE_Y 800
 
 #define MAX_COMPONENTS 32
 #define MAX_SCENES 32

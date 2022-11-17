@@ -18,7 +18,7 @@ namespace dryengine
             Scene() = delete;
             Scene(const Scene& scene) = delete; // option for future
             Scene(const Scene&& scene) = delete;
-            Scene(SDL_Renderer* mainRenderer, uint8_t id);
+            Scene(SDL_Renderer* mainRenderer, uint8_t id, int sizeX, int sizeY);
             ~Scene();
 
             void ProcessEvents(bool* state);
@@ -93,6 +93,7 @@ namespace dryengine
 
             Signature GetSceneComponentPool();
 
+            int windowSizeX, windowSizeY;
         public:
             std::shared_ptr<systemmgr::SystemManager> &SystemManager();
             std::shared_ptr<entitymgr::EntityManager> &EntityManager();

@@ -5,20 +5,25 @@ namespace dryengine
     namespace rendermgr
     {
         RenderManager::RenderManager(SDL_Renderer *rend,
-                                     std::shared_ptr<componentmgr::ComponentManager> &cmgr)
+                                     std::shared_ptr<componentmgr::ComponentManager> &cmgr,
+                                      int sizeX, int sizeY)
         {
             renderer = rend;
             componentManager = cmgr;
             camera = 0;
+
+            windowSizeX = sizeX;
+            windowSizeY = sizeY;
+
             if (rend != nullptr)
             {
                 shadow = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-                                           SDL_TEXTUREACCESS_TARGET, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+                                           SDL_TEXTUREACCESS_TARGET, windowSizeX, windowSizeY);
 
                 SDL_SetTextureBlendMode(shadow, SDL_BLENDMODE_MOD);
             }
 
-            tint = RGBALight{80, 80, 150, 255};
+            tint = RGBALight{255, 255, 255, 255};
         }
 
         RenderManager::~RenderManager()
@@ -43,8 +48,8 @@ namespace dryengine
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto const &l = componentManager->GetComponent<core::LightSource>(e);
 
-                light.x = static_cast<int>((t.pos.x + l.offset.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x)); // skalowanie
-                light.y = static_cast<int>((t.pos.y + l.offset.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y));
+                light.x = static_cast<int>((t.pos.x + l.offset.x - ct.pos.x) * (windowSizeX / cm.size.x)); // skalowanie
+                light.y = static_cast<int>((t.pos.y + l.offset.y - ct.pos.y) * (windowSizeY / cm.size.y));
                 light.w = static_cast<int>(l.size.x);
                 light.h = static_cast<int>(l.size.y);
                 SDL_SetRenderDrawColor(renderer, 200 + (l.temperature / 2), 200, 200 - (l.temperature / 2), 255);
@@ -90,10 +95,10 @@ namespace dryengine
                 {
                     if (tex.second.visible)
                     {
-                        dest.x = (int)(t.pos.x + tex.second.offset.x - ct.pos.x) * (WINDOW_SIZE_X / cm.size.x); // skalowanie
-                        dest.y = (int)(t.pos.y + tex.second.offset.y - ct.pos.y) * (WINDOW_SIZE_Y / cm.size.y);
-                        dest.w = tex.second.x * (WINDOW_SIZE_X / cm.size.x) * tex.second.scale;
-                        dest.h = tex.second.y * (WINDOW_SIZE_Y / cm.size.y) * tex.second.scale;
+                        dest.x = (int)(t.pos.x + tex.second.offset.x - ct.pos.x) * (windowSizeX / cm.size.x); // skalowanie
+                        dest.y = (int)(t.pos.y + tex.second.offset.y - ct.pos.y) * (windowSizeY / cm.size.y);
+                        dest.w = tex.second.x * (windowSizeX / cm.size.x) * tex.second.scale;
+                        dest.h = tex.second.y * (windowSizeY / cm.size.y) * tex.second.scale;
                         SDL_RenderCopyEx(renderer, tex.second.texture, ref, &dest, NULL, NULL, tex.second.flip);
                     }
                 }

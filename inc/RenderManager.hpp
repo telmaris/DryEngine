@@ -15,7 +15,8 @@ namespace dryengine
         {
         public:
             RenderManager(SDL_Renderer *rend,
-                          std::shared_ptr<componentmgr::ComponentManager> &cmgr);
+                          std::shared_ptr<componentmgr::ComponentManager> &cmgr,
+                           int sizeX, int sizeY);
 
             ~RenderManager();
 
@@ -116,6 +117,8 @@ namespace dryengine
             std::set<Entity> lightSourceList;
             Signature renderSignature;
             Signature lightSignature;
+
+            int windowSizeX, windowSizeY;
 
             bool lightsEnabled;
         };
