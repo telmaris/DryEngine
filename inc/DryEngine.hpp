@@ -16,6 +16,7 @@ namespace dryengine
             SDL_Renderer *renderer;
             SDL_Texture *mainTexture;
             SDL_Texture *lightPoints;
+            SDL_Cursor *cursor;
         };
     }
 
@@ -42,6 +43,8 @@ namespace dryengine
         std::shared_ptr<scene::Scene> CreateScene(SceneID id);
         void ChangeScene(SceneID id);
         void ChangeScene(std::shared_ptr<scene::Scene> scene_ptr);
+
+        void SetCursor(const char* sprite);
 
         void StopEngine();
         SDL_Renderer* MainRenderer();

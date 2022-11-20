@@ -68,6 +68,7 @@ namespace dryengine
         {
             SDL_DestroyRenderer(renderer);
 		    SDL_DestroyWindow(window);
+            SDL_FreeCursor(cursor);
 
 		    Mix_CloseAudio();
             IMG_Quit();
@@ -131,6 +132,27 @@ namespace dryengine
     void DryEngine::ChangeScene(std::shared_ptr<scene::Scene> scene_ptr)
     {
         currentScene = scene_ptr;
+    }
+
+    void DryEngine::SetCursor(const char* sprite)
+    {
+        SDL_Surface* surf = IMG_Load(sprite);
+        if(!surf)
+        {
+            LOGE(tag, "Error creating cursor surface!");
+            return;
+        }
+
+        sdlWrapper->cursor = SDL_CreateColorCursor(surf, 0, 0);
+        if(!sdlWrapper->cursor)
+        {
+            LOGE(tag, "Error creating cursor!");
+            SDL_FreeSurface(surf);
+            return;
+        }
+
+        SDL_SetCursor(sdlWrapper->cursor);
+        SDL_FreeSurface(surf);
     }
 
     void DryEngine::loop()

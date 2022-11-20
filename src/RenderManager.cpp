@@ -48,10 +48,10 @@ namespace dryengine
                 auto const &t = componentManager->GetComponent<core::Transform>(e);
                 auto const &l = componentManager->GetComponent<core::LightSource>(e);
 
-                light.x = static_cast<int>((t.pos.x + l.offset.x - ct.pos.x) * (windowSizeX / cm.size.x)); // skalowanie
-                light.y = static_cast<int>((t.pos.y + l.offset.y - ct.pos.y) * (windowSizeY / cm.size.y));
-                light.w = static_cast<int>(l.size.x);
-                light.h = static_cast<int>(l.size.y);
+                light.x = static_cast<int>((t.pos.x + l.offset.x - ct.pos.x) * ((windowSizeX * cm.zoom) / cm.size.x)); // skalowanie
+                light.y = static_cast<int>((t.pos.y + l.offset.y - ct.pos.y) * ((windowSizeY * cm.zoom) / cm.size.y));
+                light.w = static_cast<int>(l.size.x * ((windowSizeX * cm.zoom) / cm.size.x));
+                light.h = static_cast<int>(l.size.y * ((windowSizeY * cm.zoom) / cm.size.y));
                 SDL_SetRenderDrawColor(renderer, 200 + (l.temperature / 2), 200, 200 - (l.temperature / 2), 255);
                 SDL_RenderFillRect(renderer, &light);
             }
@@ -95,10 +95,10 @@ namespace dryengine
                 {
                     if (tex.second.visible)
                     {
-                        dest.x = (int)(t.pos.x + tex.second.offset.x - ct.pos.x) * (windowSizeX / cm.size.x); // skalowanie
-                        dest.y = (int)(t.pos.y + tex.second.offset.y - ct.pos.y) * (windowSizeY / cm.size.y);
-                        dest.w = tex.second.x * (windowSizeX / cm.size.x) * tex.second.scale;
-                        dest.h = tex.second.y * (windowSizeY / cm.size.y) * tex.second.scale;
+                        dest.x = (int)(t.pos.x + tex.second.offset.x - ct.pos.x) * ((windowSizeX * cm.zoom) / cm.size.x); // skalowanie
+                        dest.y = (int)(t.pos.y + tex.second.offset.y - ct.pos.y) * ((windowSizeY * cm.zoom) / cm.size.y);
+                        dest.w = tex.second.x * ((windowSizeX * cm.zoom) / cm.size.x) * tex.second.scale;
+                        dest.h = tex.second.y * ((windowSizeY * cm.zoom) / cm.size.y) * tex.second.scale;
                         SDL_RenderCopyEx(renderer, tex.second.texture, ref, &dest, NULL, NULL, tex.second.flip);
                     }
                 }
@@ -191,6 +191,11 @@ namespace dryengine
             return texture;
         }
 
+        void RenderManager::DestroyTexture(SDL_Texture* tex)
+        {
+            SDL_DestroyTexture(tex);
+        }
+
         SDL_Texture *RenderManager::CreateTexture(int x, int y)
         {
             SDL_Texture *tex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
@@ -216,6 +221,13 @@ namespace dryengine
             return sprite;
         }
 
+        void RenderManager::SetOffset(Entity e, int id, math::Vector2 offset)
+        {
+            auto &gfx = componentManager->GetComponent<core::Graphics>(e);
+
+            gfx.textures[id].offset = offset;
+        }
+
         void RenderManager::SetActiveCamera(Entity e)
         {
             camera = e;
@@ -235,6 +247,11 @@ namespace dryengine
         math::Vector2 const &RenderManager::GetCameraSize()
         {
             return componentManager->GetComponent<core::Camera>(camera).size;
+        }
+
+        double const& RenderManager::GetCameraZoom()
+        {
+            return componentManager->GetComponent<core::Camera>(camera).zoom;
         }
 
         void RenderManager::AddAnimation(Entity e, std::string n, int s, int l, int ox, int oy, uint8_t type)

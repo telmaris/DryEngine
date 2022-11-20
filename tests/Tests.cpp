@@ -88,7 +88,7 @@ namespace dryengine
         auto &tCamera = s1->GetComponent<core::Transform>(e);
         auto const &tDino = s1->GetComponent<core::Transform>(dino);
 
-        tCamera.pos.x = tDino.pos.x - (s1->RenderManager()->GetCameraSize().x / 2);
+        tCamera.pos.x = tDino.pos.x - (s1->RenderManager()->GetCameraSize().x  / (2 * s1->RenderManager()->GetCameraZoom()));
     }
 
     void mapScript(double dt, Entity e)
@@ -110,11 +110,11 @@ namespace dryengine
     void Tests()
     {
         engine->ChangeScene(0);
-
+        engine->SetCursor("assets/cursor.png");
         s1->RenderManager()->SetActiveCamera(camera);
 
         s1->AddComponent(camera, core::Transform{0, 0});
-        s1->AddComponent(camera, core::Camera{math::Vector2{1440, 800}});
+        s1->AddComponent(camera, core::Camera{math::Vector2{1440, 800}, 1});
         s1->AddComponent(camera, core::Script{cameraScript});
 
         // std::cout << s1->GetCameraPosition() << std::endl;
